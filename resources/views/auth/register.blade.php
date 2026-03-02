@@ -18,22 +18,23 @@
                     <h2 class="font-inconsolata text-sm">Completa este registro gratuito y comienza una nueva historia</h2>
                 </div>
 
-                <form novalidate autocomplete="off" method="POST" class="text-center font-inconsolata w-75 md:w-85">
+                <form novalidate autocomplete="off" method="POST" action="{{ route('register.store') }}" class="text-center font-inconsolata w-75 md:w-85">
+                    @csrf
 
                     <div class="flex flex-row justify-between items-center gap-5">
                         <div class="input-floating w-full">
-                            <input type="text" placeholder="Ingrese nombre" class="input" id="nombre"/>
+                            <input type="text" placeholder="Ingrese nombre" class="input" id="nombre" name="nombres"/>
                             <label class="input-floating-label" for="nombre">Nombre</label>
                         </div>
 
                         <div class="input-floating w-full">
-                            <input type="text" placeholder="Ingrese apellido" class="input" id="apellido"/>
+                            <input type="text" placeholder="Ingrese apellido" class="input" id="apellido" name="apellidos"/>
                             <label class="input-floating-label" for="apellido">Apellido</label>
                         </div>
                     </div>
 
                     <div class="input-floating w-full max-w-md mt-4">
-                        <input type="text" placeholder="Ingrese correo" class="input" id="correo"/>
+                        <input type="text" placeholder="Ingrese correo" class="input" id="correo" name="correo"/>
                         <label class="input-floating-label" for="correo">Correo Electrónico</label>
                     </div>
 
@@ -44,6 +45,7 @@
                                 <input 
                                     type="password" 
                                     id="password" 
+                                    name="password"
                                     class="input w-full" 
                                     placeholder="Ingrese Contraseña" 
                                 />
@@ -121,13 +123,14 @@
                             <div class="input-floating">
                                 <input 
                                     type="password" 
-                                    id="confirm-password" 
+                                    id="password_confirmation" 
+                                    name="password_confirmation" 
                                     class="input w-full" 
                                     placeholder="Confirmar Contraseña" 
                                 />
                                 <label 
                                     class="input-floating-label" 
-                                    for="confirm-password">
+                                    for="password_confirmation">
                                     Confirmar Contraseña
                                 </label>
                             </div>
@@ -152,7 +155,7 @@
                                 "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
                                 "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>"
                                 }'
-                                class="hidden w-full"
+                                class="hidden w-full" name="genero" 
                             >
                                 <option value="">Elija</option>
                                 <option value="M">Masculino</option>
@@ -162,7 +165,7 @@
                         </div>
 
                         <div class="input-floating max-w-md w-full">
-                            <input type="text" placeholder="DD-MM-AAAA" class="input" id="flatpickr-floating" />
+                            <input type="text" placeholder="DD-MM-AAAA" class="input" id="flatpickr-floating" name="fecha_nacimiento" />
                             <label class="input-floating-label" for="flatpickr-floating">Nacimiento</label>
                         </div>
                     
@@ -170,14 +173,14 @@
 
                     <div class="max-w-sm mt-4">
 
-                        <select id="pais">
+                        <select id="pais" name="pais" >
                             <option value="">Elija</option>
                         </select>
                             
                     </div>
 
                     <div class="input-floating w-full mt-4">
-                        <input type="text" placeholder="Ingrese su ciudad" class="input" id="ciudad"/>
+                        <input type="text" placeholder="Ingrese su ciudad" class="input" id="ciudad" name="ciudad" />
                         <label class="input-floating-label" for="ciudad">Ciudad</label>
                     </div>
 
@@ -255,7 +258,7 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const password = document.getElementById("password");
-            const confirmPassword = document.getElementById("confirm-password");
+            const confirmPassword = document.getElementById("password_confirmation");
             const message = document.getElementById("password-match-message");
 
             function validatePasswordMatch() {

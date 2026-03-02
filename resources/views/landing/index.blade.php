@@ -74,7 +74,14 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
 
                 <ul class="menu md:menu-horizontal gap-2 p-0 text-base-content max-md:mt-2">
 
-                    <a class="btn btn-primary md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">Ingresar</a>
+                    @if(session()->has('usuario_id'))
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" type="submit">Salir</button>
+                    </form>
+                    @else
+                        <a class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">Ingresar</a>
+                    @endif
 
                     <button class="btn md:hidden font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
 
@@ -99,11 +106,19 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
 
             </div>
 
-            <div class="items-center justify-between w-auto hidden md:block">
+            <div class="items-center justify-between w-auto hidden md:flex gap-3">
 
                 <button class="btn bg-none font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
-                <a class="btn btn-primary text-lg" href="{{ route('login') }}">Ingresar</a>
-             
+
+                @if(session()->has('usuario_id'))
+                <form method="POST" action="{{ route('logout') }}">
+                    @csrf
+                    <button class="btn btn-primary text-lg" type="submit">Salir</button>
+                </form>
+                @else
+                    <a class="btn btn-primary text-lg" href="{{ route('login') }}">Ingresar</a>
+                @endif
+
             </div>
 
         </div>

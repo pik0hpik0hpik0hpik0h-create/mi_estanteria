@@ -23,10 +23,11 @@
                     <h2 class="font-inconsolata text-sm">Vuelve a conectar con historias que inspiran y compártelas</h2>
                 </div>
 
-                <form novalidate autocomplete="off" method="POST" class="text-center font-inconsolata w-75 md:w-85">
+                <form novalidate autocomplete="off" method="POST" action="{{ route('login.submit') }}" class="text-center font-inconsolata w-75 md:w-85">
+                    @csrf
 
                     <div class="input-floating w-full max-w-md">
-                        <input type="text" placeholder="Ingrese correo" class="input" id="correo"/>
+                        <input type="text" placeholder="Ingrese correo" class="input" id="correo" name="correo"/>
                         <label class="input-floating-label" for="correo">Correo Electrónico</label>
                     </div>
 
@@ -35,7 +36,7 @@
                         <div class="input">
 
                             <div class="input-floating w-full max-w-md">
-                                <input id="toggle-password-floating" type="password" placeholder="Ingrese contraseña" />
+                                <input id="toggle-password-floating" type="password" placeholder="Ingrese contraseña" name="password"/>
                                 <label class="input-floating-label ms-0" for="toggle-password-floating">
                                     Contraseña
                                 </label>
@@ -89,7 +90,7 @@
                     </button>
                 </div>
 
-                <a href="{{ route('register') }}" class="font-inconsolata link link-animated link-primary motion-preset-blink motion-duration-2000">¿Sin cuenta?, registrate ahora</a>
+                <a href="{{ route('register.create') }}" class="font-inconsolata link link-animated link-primary motion-preset-blink motion-duration-2000">¿Sin cuenta?, registrate ahora</a>
 
             </div>
 
