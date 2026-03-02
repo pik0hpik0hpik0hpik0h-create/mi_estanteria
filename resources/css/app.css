@@ -1,0 +1,60 @@
+@import url('https://fonts.googleapis.com/css2?family=Inconsolata:wdth,wght@112.5,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&display=swap');
+@import "tailwindcss";
+@plugin "flyonui";
+@import "../../node_modules/flyonui/variants.css";
+@source "../../node_modules/flyonui/dist/index.js";
+@plugin "@iconify/tailwind4";
+@import "tailwindcss-intersect";
+@plugin "tailwindcss-motion";
+@import "flyonui/src/vendor/raty.css";
+@import "../../node_modules/flyonui/src/vendor/flatpickr.css";
+
+@theme {
+  --font-inconsolata: "Inconsolata", monospace;
+  --font-serif: "DM Serif Display", serif;
+}
+
+@plugin "flyonui/theme" {
+  name: "estanteria";
+  default: true; /* Set as default theme */
+  prefersdark: false; /* Set dark mode for prefers-color-scheme: dark */
+  color-scheme: light; /* Defines the color of browser UI */
+
+  --color-base-100: oklch(0.9848 0.0113 71.9);
+  --color-base-200: oklch(0.949 0.0217 69.78);
+  --color-base-300: oklch(0.8583 0.0404 73.39);
+  --color-base-content: oklch(0.2785 0.015 62.76);
+  --color-primary: oklch(0.6136 0.205306 37.0182);
+  --color-primary-content: oklch(0.89 0.0578 27.52);
+  --color-secondary: oklch(0.2673 0.1042 5.9);
+  --color-secondary-content: oklch(0.9417 0.0338 352.03);
+  --color-accent: oklch(0.8413 0.0518 196.21);
+  --color-accent-content: oklch(0.3519 0.070865 230.9125);
+  --color-neutral: oklch(0.4128 0 0);
+  --color-neutral-content: oklch(0.8607 0 0);
+  --color-info: oklch(0.9177 0.0394 271.45);
+  --color-info-content: oklch(0.2856 0.1492 271.42);
+  --color-success: oklch(0.8987 0.037 188.08);
+  --color-success-content: oklch(0.3755 0.0593 191.63);
+  --color-warning: oklch(0.8861 0.1087 80.39);
+  --color-warning-content: oklch(0.5599 0.1186 74.12);
+  --color-error: oklch(0.9073 0.0478 26.03);
+  --color-error-content: oklch(0.2723 0.0945 33.63);
+
+  /* Border Radius */
+  --radius-selector: 1rem;
+  --radius-field: 0.25rem;
+  --radius-box: 0.5rem;
+
+  /* Base Sizes */
+  --size-selector: 0.25rem;
+  --size-field: 0.25rem;
+
+  /* Border Size */
+  --border: 1px;
+
+  /* Effects */
+  --depth: 1;
+  --noise: 0;
+}
