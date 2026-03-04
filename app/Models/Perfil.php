@@ -3,16 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Perfil extends Model
 {
     protected $table = 'perfiles';
+
     public $timestamps = false;
 
     protected $fillable = [
-        'usuario_id',
+        'user_id', 
         'nombres',
         'apellidos',
+        'genero',
+        'fecha_nacimiento',
         'telefono',
         'pais',
         'ciudad',
@@ -25,8 +29,8 @@ class Perfil extends Model
         'fecha_actualizacion'
     ];
 
-    public function usuario()
+    public function user()
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+        return $this->belongsTo(User::class);
     }
 }

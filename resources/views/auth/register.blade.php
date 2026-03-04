@@ -34,8 +34,8 @@
                     </div>
 
                     <div class="input-floating w-full max-w-md mt-4">
-                        <input type="text" placeholder="Ingrese correo" class="input" id="correo" name="correo"/>
-                        <label class="input-floating-label" for="correo">Correo Electrónico</label>
+                        <input type="text" placeholder="Ingrese correo" class="input" id="email" name="email"/>
+                        <label class="input-floating-label" for="email">Correo Electrónico</label>
                     </div>
 
                     <div class="max-w-sm mt-4">
@@ -160,12 +160,11 @@
                                 <option value="">Elija</option>
                                 <option value="M">Masculino</option>
                                 <option value="F">Femenino</option>
-                                <option value="O">Otro</option>
                             </select>
                         </div>
 
                         <div class="input-floating max-w-md w-full">
-                            <input type="text" placeholder="DD-MM-AAAA" class="input" id="flatpickr-floating" name="fecha_nacimiento" />
+                            <input type="text" placeholder="AAAA-MM-DD" class="input" id="flatpickr-floating" name="fecha_nacimiento" />
                             <label class="input-floating-label" for="flatpickr-floating">Nacimiento</label>
                         </div>
                     
@@ -208,7 +207,7 @@
             monthSelectorType: 'static',
             allowInput: true,
             maxDate: 'today',
-            dateFormat:	"d-m-Y",
+            dateFormat:	"Y-m-d",
             })
         })
     </script>

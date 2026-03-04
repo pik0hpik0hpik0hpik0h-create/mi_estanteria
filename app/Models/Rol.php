@@ -3,21 +3,23 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\User;
 
 class Rol extends Model
 {
-    protected $table = 'roles_usuario';
+    protected $table = 'roles';
+
     public $timestamps = false;
 
     protected $fillable = [
-        'usuario_id',
+        'user_id',
         'rol',
         'estado',
         'fecha_asignacion'
     ];
 
-    public function usuario()
+    public function user()
     {
-        return $this->belongsTo(Usuario::class, 'usuario_id');
+        return $this->belongsTo(User::class);
     }
 }

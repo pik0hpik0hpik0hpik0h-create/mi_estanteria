@@ -27,8 +27,8 @@
                     @csrf
 
                     <div class="input-floating w-full max-w-md">
-                        <input type="text" placeholder="Ingrese correo" class="input" id="correo" name="correo"/>
-                        <label class="input-floating-label" for="correo">Correo Electrónico</label>
+                        <input type="text" placeholder="Ingrese correo" class="input" id="email" name="email"/>
+                        <label class="input-floating-label" for="email">Correo Electrónico</label>
                     </div>
 
                     <div class="mt-4">

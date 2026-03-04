@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Usuario;
+use App\Models\User; 
 use App\Models\Perfil;
 use App\Models\Rol;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+
 
 class UsuarioController extends Controller
 {
@@ -23,7 +25,7 @@ class UsuarioController extends Controller
         $request->validate([
             'nombres' => 'required',
             'apellidos' => 'required',
-            'correo' => 'required|email|unique:usuarios,correo',
+            'email' => 'required|email|unique:users,email',
             'password' => 'required|min:6|confirmed',
             'genero' => 'required',
             'fecha_nacimiento' => 'required',
@@ -33,66 +35,75 @@ class UsuarioController extends Controller
 
         DB::transaction(function () use ($request) {
 
-            $usuario = Usuario::create([
-                'correo' => $request->correo,
-                'contrasena_hash' => Hash::make($request->password),
-                'estado' => 'pendiente',
-                'fecha_registro' => now(),
-                'ultimo_acceso' => null
+            $usuario = User::create([
+                'name' => $request->nombres . ' ' . $request->apellidos,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
             ]);
 
             Perfil::create([
-                'usuario_id' => $usuario->id,
+                'user_id' => $usuario->id,
                 'nombres' => $request->nombres,
                 'apellidos' => $request->apellidos,
+                'genero' => $request->genero,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
                 'pais' => $request->pais,
                 'ciudad' => $request->ciudad,
                 'fecha_actualizacion' => now()
             ]);
 
             Rol::create([
-                'usuario_id' => $usuario->id,
+                'user_id' => $usuario->id,
                 'rol' => 'comprador',
-                'estado' => 'activo',
+                'estado' => true,
                 'fecha_asignacion' => now()
             ]);
 
         });
 
-        return back()->with('success', 'Usuario registrado correctamente');
+        return redirect()->route('login')->with('success', 'Usuario registrado correctamente');
     }
 
-    // Mostrar formulario
+    // MOSTRAR FORMULARIO
     public function form()
     {
         return view('auth.login');
     }
 
-    // Procesar login
+    // PROCESAR LOGIN
     public function login(Request $request)
     {
         $request->validate([
-            'correo' => 'required|email',
+            'email' => 'required|email',
             'password' => 'required'
         ]);
 
-        $usuario = Usuario::where('correo', $request->correo)->first();
+        // INTENTAR AUTENTICACIÓN
+        if (Auth::attempt([
+            'email' => $request->email,
+            'password' => $request->password
+        ])) {
 
-        if (!$usuario || !Hash::check($request->password, $usuario->contrasena_hash)) {
-            return back()->withErrors(['correo' => 'Correo o contraseña incorrectos']);
+            // Regenerar sesión (seguridad)
+            $request->session()->regenerate();
+
+            return redirect()->route('index')
+                ->with('success', 'Bienvenido ' . Auth::user()->name);
         }
 
-        // Guardar sesión manualmente
-        session(['usuario_id' => $usuario->id, 'usuario_correo' => $usuario->correo]);
-
-        // Redirigir a página de inicio
-        return redirect()->route('index')->with('success', 'Bienvenido ' . $usuario->correo);
+        return back()->withErrors([
+            'email' => 'Correo o contraseña incorrectos'
+        ])->withInput();
     }
 
-    // Cerrar sesión
-    public function logout()
+    // CERRAR SESIÓN
+    public function logout(Request $request)
     {
-        session()->flush();
+        Auth::logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
         return redirect()->route('login');
     }
 }
