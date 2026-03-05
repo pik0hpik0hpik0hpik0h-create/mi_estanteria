@@ -5,11 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\User; 
 use App\Models\Perfil;
 use App\Models\Rol;
+use App\Services\UserService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
-
 
 class UsuarioController extends Controller
 {
@@ -33,7 +33,7 @@ class UsuarioController extends Controller
             'ciudad' => 'required'
         ]);
 
-        DB::transaction(function () use ($request) {
+        $usuario = DB::transaction(function () use ($request) {
 
             $usuario = User::create([
                 'name' => $request->nombres . ' ' . $request->apellidos,
@@ -41,27 +41,14 @@ class UsuarioController extends Controller
                 'password' => Hash::make($request->password),
             ]);
 
-            Perfil::create([
-                'user_id' => $usuario->id,
-                'nombres' => $request->nombres,
-                'apellidos' => $request->apellidos,
-                'genero' => $request->genero,
-                'fecha_nacimiento' => $request->fecha_nacimiento,
-                'pais' => $request->pais,
-                'ciudad' => $request->ciudad,
-                'fecha_actualizacion' => now()
-            ]);
+            UserService::crearPerfilYRol($usuario, $request->all());
 
-            Rol::create([
-                'user_id' => $usuario->id,
-                'rol' => 'comprador',
-                'estado' => true,
-                'fecha_asignacion' => now()
-            ]);
-
+            return $usuario;
         });
 
-        return redirect()->route('login')->with('success', 'Usuario registrado correctamente');
+        Auth::login($usuario);
+
+        return redirect()->route('index')->with('success', 'Usuario registrado correctamente');
     }
 
     // MOSTRAR FORMULARIO
@@ -78,13 +65,11 @@ class UsuarioController extends Controller
             'password' => 'required'
         ]);
 
-        // INTENTAR AUTENTICACIÓN
-        if (Auth::attempt([
-            'email' => $request->email,
-            'password' => $request->password
-        ])) {
+        $credentials = $request->only('email', 'password');
 
-            // Regenerar sesión (seguridad)
+        if (Auth::attempt($credentials, $request->boolean('remember'))) {
+
+            // regenerar sesión (seguridad)
             $request->session()->regenerate();
 
             return redirect()->route('index')

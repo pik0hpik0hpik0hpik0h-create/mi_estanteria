@@ -52,8 +52,8 @@
                         <div class="mt-3 flex justify-between">
 
                             <div class="flex items-center gap-2">
-                                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" id="recuerdame" />
-                                <label class="label-text text-base-content/80 p-0 text-sm" for="recuerdame">Recuerdame</label>
+                                <input type="checkbox" class="checkbox checkbox-primary checkbox-sm" id="remember" name="remember"/>
+                                <label class="label-text text-base-content/80 p-0 text-sm" for="remember">Recuerdame</label>
                             </div>
 
                             <a href="#" class="link link-animated link-primary text-sm">
@@ -76,18 +76,12 @@
 
                 </form>
 
-                <div class="w-75 md:w-85 flex flex-row justify-between px-10">
-                    <button class="btn btn-text hover:bg-primary/20 active:bg-primary/40">
-                        <img src="https://cdn.flyonui.com/fy-assets/blocks/marketing-ui/brand-logo/google-icon.png" alt="google icon" class="size-4 object-cover" />
-                    </button>
+                <div class="w-75 md:w-85 flex flex-row justify-center px-10">
 
-                    <button class="btn btn-text hover:bg-primary/20 active:bg-primary/40">
-                        <img src="https://cdn.flyonui.com/fy-assets/blocks/marketing-ui/brand-logo/facebook-icon.png" alt="google icon" class="size-4 object-cover" />
-                    </button>
-
-                    <button class="btn btn-text hover:bg-primary/20 active:bg-primary/40">
-                        <img src="https://cdn.flyonui.com/fy-assets/blocks/marketing-ui/brand-logo/twitter-icon.png" alt="google icon" class="size-4 object-cover" />
-                    </button>
+                    <a href="{{ url('/auth/google') }}" class="btn btn-text hover:bg-primary/20 active:bg-primary/40 font-inconsolata">
+                        <img src="https://cdn.flyonui.com/fy-assets/blocks/marketing-ui/brand-logo/google-icon.png" alt="google icon" class="size-4 object-cover" />Ingresar con Google
+                    </a>
+                    
                 </div>
 
                 <a href="{{ route('register.create') }}" class="font-inconsolata link link-animated link-primary motion-preset-blink motion-duration-2000">¿Sin cuenta?, registrate ahora</a>

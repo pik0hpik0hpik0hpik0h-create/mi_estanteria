@@ -74,14 +74,18 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
 
                 <ul class="menu md:menu-horizontal gap-2 p-0 text-base-content max-md:mt-2">
 
-                    @if(session()->has('usuario_id'))
+                    @auth
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" type="submit">Salir</button>
+                        <button class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" type="submit">
+                            Salir
+                        </button>
                     </form>
                     @else
-                        <a class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">Ingresar</a>
-                    @endif
+                    <a class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">
+                        Ingresar
+                    </a>
+                    @endauth
 
                     <button class="btn md:hidden font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
 
@@ -110,14 +114,14 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
 
                 <button class="btn bg-none font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
 
-                @if(session()->has('usuario_id'))
+                @auth
                 <form method="POST" action="{{ route('logout') }}">
                     @csrf
                     <button class="btn btn-primary text-lg" type="submit">Salir</button>
                 </form>
                 @else
                     <a class="btn btn-primary text-lg" href="{{ route('login') }}">Ingresar</a>
-                @endif
+                @endauth
 
             </div>
 

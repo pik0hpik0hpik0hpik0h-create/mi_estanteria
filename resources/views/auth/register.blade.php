@@ -183,8 +183,22 @@
                         <label class="input-floating-label" for="ciudad">Ciudad</label>
                     </div>
 
-                    <div class="w-full max-w-md mt-8">
-                        <button type="submmit" class="btn btn-primary w-full">Registrarse</button>
+                    <div class="flex items-center gap-5 mt-8">
+
+                        <button type="submit"
+                            class="flex-1 btn btn-primary">
+                            Registrarse
+                        </button>
+
+                        <a href="{{ url('/auth/google') }}"
+                            class="flex-1 btn btn-text hover:bg-primary/20 active:bg-primary/40 font-inconsolata flex items-center justify-center gap-2">
+                            
+                            <img src="https://cdn.flyonui.com/fy-assets/blocks/marketing-ui/brand-logo/google-icon.png"
+                                alt="google icon"
+                                class="size-4 object-cover" />
+                            <span>Con Google</span>
+                        </a>
+
                     </div>
 
                 </form>
