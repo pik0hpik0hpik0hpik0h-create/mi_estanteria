@@ -67,6 +67,6 @@ class GoogleController extends Controller
         // login
         Auth::login($user, true);
 
-        return redirect('/');
+        return redirect()->route('index')->with('success', 'Bienvenido de nuevo ' . (Auth::user()->perfil->nombres ?? Auth::user()->name));
     }
 }

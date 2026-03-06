@@ -8,6 +8,8 @@
 </head>
 <body class="bg-base-100">
 
+    @include('components.alerts')
+
     @yield('content')
 
 </body>

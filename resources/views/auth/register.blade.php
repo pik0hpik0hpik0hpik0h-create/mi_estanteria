@@ -183,7 +183,17 @@
                         <label class="input-floating-label" for="ciudad">Ciudad</label>
                     </div>
 
-                    <div class="flex items-center gap-5 mt-8">
+                    @if ($errors->any())
+                    <div class="font-inconsolata text-sm text-red-500 mt-3">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
+
+                    <div class="flex items-center gap-5 {{ $errors->any() ? 'mt-3' : 'mt-8' }}">
 
                         <button type="submit"
                             class="flex-1 btn btn-primary">

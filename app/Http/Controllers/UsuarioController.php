@@ -72,18 +72,22 @@ class UsuarioController extends Controller
             // regenerar sesión (seguridad)
             $request->session()->regenerate();
 
-            return redirect()->route('index')
-                ->with('success', 'Bienvenido ' . Auth::user()->name);
+            return redirect()->route('index')->with('success', 'Bienvenido de nuevo ' . (Auth::user()->perfil->nombres ?? Auth::user()->name));
         }
 
-        return back()->withErrors([
-            'email' => 'Correo o contraseña incorrectos'
-        ])->withInput();
+        return back()->withErrors(['email' => 'Correo o contraseña incorrectos'])->withInput();
     }
 
     // CERRAR SESIÓN
     public function logout(Request $request)
     {
+        $user = Auth::user();
+
+        if ($user) {
+            $user->remember_token = null;
+            $user->save();
+        }
+
         Auth::logout();
 
         $request->session()->invalidate();

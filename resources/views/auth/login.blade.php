@@ -64,9 +64,17 @@
 
                     </div>
 
-                    
+                    @if ($errors->any())
+                    <div class="font-inconsolata text-sm text-red-500 mt-3">
+                        <ul>
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                    @endif
 
-                    <div class="w-full max-w-md mt-8">
+                    <div class="w-full max-w-md {{ $errors->any() ? 'mt-3' : 'mt-8' }}">
                         <button class="btn btn-primary w-full">Ingresar</button>
                     </div>
 
