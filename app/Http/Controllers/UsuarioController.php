@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Perfil;
 use App\Models\Rol;
 use App\Services\UserService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
@@ -46,9 +47,13 @@ class UsuarioController extends Controller
             return $usuario;
         });
 
+        event(new Registered($usuario));
+
         Auth::login($usuario);
 
-        return redirect()->route('index')->with('success', 'Usuario registrado correctamente');
+        return redirect()->route('verification.notice');
+
+        // return redirect()->route('index')->with('success', 'Usuario registrado correctamente');
     }
 
     // MOSTRAR FORMULARIO

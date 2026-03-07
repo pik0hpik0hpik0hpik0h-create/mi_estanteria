@@ -11,7 +11,7 @@
 
         <div class="md:w-1/2 w-full flex flex-col min-h-screen rounded-4xl motion-preset-slide-right">
 
-            <div class="flex justify-between p-5">
+            <div class="flex justify-between items-center p-5">
                 <a href="{{ route('index') }}" class="btn btn-text font-inconsolata btn-sm"><- Regresar</a>
                 <img src="{{ asset('assets/img/logo_navbar.png') }}" class="w-15" alt="Mi Estantería">
             </div>
