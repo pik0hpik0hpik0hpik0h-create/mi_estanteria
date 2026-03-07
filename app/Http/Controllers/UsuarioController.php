@@ -74,6 +74,12 @@ class UsuarioController extends Controller
 
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
 
+            $user = Auth::user();
+
+            if (!$user->hasVerifiedEmail()) {
+                $user->sendEmailVerificationNotification();
+            }
+
             // regenerar sesión (seguridad)
             $request->session()->regenerate();
 

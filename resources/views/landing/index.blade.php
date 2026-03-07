@@ -75,12 +75,24 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
                 <ul class="menu md:menu-horizontal gap-2 p-0 text-base-content max-md:mt-2">
 
                     @auth
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" type="submit">
-                            Salir
-                        </button>
-                    </form>
+                    <div class="mt-2 flex gap-2">
+                        <a class="btn btn-primary w-1/2 md:hidden text-sm md:text-lg" href="#">
+                            <div class="avatar">
+                                <div class="size-5 rounded-full">
+                                    <img src="{{ Auth::user()->avatar }}" alt="avatar" />
+                                </div>
+                            </div>
+                            Perfil
+                        </a>
+
+                        <form method="POST" class="w-1/2"action="{{ route('logout') }}">
+                            @csrf
+                            <button class="btn btn-primary w-full md:hidden text-sm md:text-lg" type="submit">
+                                <span class="icon-[tabler--logout-2] size-5"></span>
+                                Salir
+                            </button>
+                        </form>
+                    </div>
                     @else
                     <a class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">
                         Ingresar
@@ -115,10 +127,13 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
                 <button class="btn bg-none font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
 
                 @auth
-                <form method="POST" action="{{ route('logout') }}">
-                    @csrf
-                    <button class="btn btn-primary text-lg" type="submit">Salir</button>
-                </form>
+                <a href="#">
+                    <div class="avatar">
+                        <div class="size-10 rounded-full border-2 border-base-300">
+                            <img src="{{ Auth::user()->avatar }}" alt="avatar" />
+                        </div>
+                    </div>
+                </a>
                 @else
                     <a class="btn btn-primary text-lg" href="{{ route('login') }}">Ingresar</a>
                 @endauth
