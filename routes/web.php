@@ -51,7 +51,9 @@ Route::middleware(['auth','not.verified'])->group(function () {
 
 // RUTAS PARA USUARIOS AUTENTICADOS Y VERIFICADOS
 Route::middleware(['auth', 'verified'])->group(function () {
-    
+
+    Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
+
 });
 
 

@@ -106,4 +106,13 @@ class UsuarioController extends Controller
 
         return redirect()->route('login');
     }
+
+    // PERFIL DE USUARIO
+    public function perfil()
+    {
+        $user = Auth::user()->load('roles', 'perfil');;
+
+        return view('auth.perfil', compact('user'));
+    }
+
 }
