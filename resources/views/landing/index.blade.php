@@ -67,13 +67,17 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
         <p class="text-center md:text-2xl text-xs text-base-content text-pretty"><strong>MiEstantería</strong> es una plataforma digital donde puedes <strong>comprar</strong> y <strong>vender</strong><strong>e-books de forma</strong> <strong>fácil</strong> y <strong>segura</strong>. Descubre <strong>nuevos libros</strong>, <strong>apoya a</strong><strong>autores independientes</strong> y publica tus propias <strong>obras para llegar</strong>a <strong>más lectores</strong>, todo en <strong>un solo lugar</strong>.</p>
     </article>
 
-    <div class="flex items-center justify-center md:pb-10 pb-5">
+    @auth
+        <div class="divider divider-dashed mt-0 md:mt-8"></div>
+    @else
+        <div class="flex items-center justify-center md:pb-10 pb-5">
     
-        <button class="btn btn-primary btn-md md:btn-lg font-inconsolata text-md motion-preset-pulse">Empezar Ahora</button>
+            <a href="{{ route('register.create') }}" class="btn btn-primary btn-md md:btn-lg font-inconsolata text-md motion-preset-pulse">Empezar Ahora</a>
 
-    </div>
+        </div>
 
-    <div class="divider divider-dashed mt-8"></div>
+        <div class="divider divider-dashed mt-8"></div>
+    @endauth
 
     <div id="auto-height" data-carousel='{ "loadingClasses": "opacity-0", "isAutoPlay": true, "speed": 4000, "isInfiniteLoop": true }' class="relative w-full p-5">
     <div class="carousel">
@@ -130,7 +134,11 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
         </div>
     </div>
 
+    <section id="mas_vendidos">
+
     <h1 class="font-serif text-center md:text-4xl text-xl m-10">LO MÁS VENDIDO ESTE MES</h1>
+
+    </section>
 
     <div class="bg-base-300 mx-5 p-10 rounded-xl flex items-center justify-between gap-10 overflow-x-auto intersect:motion-preset-slide-left">
 
@@ -184,7 +192,11 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
 
     </div>
 
+    <section id="novedades">
+
     <h1 class="font-serif text-center md:text-4xl text-xl m-10">NOVEDADES ESTE MES</h1>
+
+    </section>
 
     <div class="bg-base-300 mx-5 p-10 rounded-xl flex items-center justify-between gap-10 overflow-x-auto intersect:motion-preset-slide-right">
 
@@ -240,6 +252,8 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
 
     <div class="divider divider-dashed my-5"></div>
 
+    <section id="contacto"></section>
+
     <div class="px-8 pt-5 bg-linear-to-b from-transparent to-base-300 ">
 
         <footer class="footer bg-secondary p-15 font-inconsolata rounded-xl">
@@ -253,7 +267,7 @@ $categorias = ["Negocios", "Romance", "Tecnología", "Educación", "Ficción", "
                 <h6 class="footer-title text-secondary-content font-black">Mi Estantería</h6>
                 <a href="#" class="link link-hover text-secondary-content hover:text-primary">Nosotros</a>
                 <a href="#" class="link link-hover text-secondary-content hover:text-primary">Contacto</a>
-                <a href="#" class="link link-hover text-secondary-content hover:text-primary">Otro Proyectos</a>
+                <a href="https://creinti.com" class="link link-hover text-secondary-content hover:text-primary">Otro Proyectos</a>
             </nav>
             <nav class="text-secondary-content">
                 <h6 class="footer-title text-secondary-content font-black">Redes</h6>

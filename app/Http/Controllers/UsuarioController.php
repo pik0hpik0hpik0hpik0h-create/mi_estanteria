@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UsuarioController extends Controller
 {
@@ -52,8 +53,6 @@ class UsuarioController extends Controller
         Auth::login($usuario);
 
         return redirect()->route('verification.notice');
-
-        // return redirect()->route('index')->with('success', 'Usuario registrado correctamente');
     }
 
     // MOSTRAR FORMULARIO
@@ -83,7 +82,7 @@ class UsuarioController extends Controller
             // regenerar sesión (seguridad)
             $request->session()->regenerate();
 
-            return redirect()->route('index')->with('success', 'Bienvenido de nuevo ' . (Auth::user()->perfil->nombres ?? Auth::user()->name));
+            return redirect()->route('index')->with('success', 'Bienvenido de nuevo ' . (Auth::user()->name ?? Auth::user()->perfil->nombres));
         }
 
         return back()->withErrors(['email' => 'Correo o contraseña incorrectos'])->withInput();
@@ -115,4 +114,61 @@ class UsuarioController extends Controller
         return view('auth.perfil', compact('user'));
     }
 
+    // EDITAR PERFIL DE USUARIO
+    public function editar(Request $request)
+    {
+        $user = Auth::user();
+
+        $request->validate([
+            'bio' => 'nullable',
+            'usuario' => 'required',
+            'nombres' => 'required',
+            'apellidos' => 'required',
+            'genero' => 'required',
+            'fecha_nacimiento' => 'required|date',
+            'pais' => 'required',
+            'ciudad' => 'required',
+            'email' => [
+                'required',
+                'email',
+                Rule::unique('users','email')->ignore($user->id)
+            ],
+            'telefono' => 'nullable|digits_between:7,15',
+            'avatar' => 'nullable|image|mimes:jpg,jpeg,png,webp,gif|max:2048',
+            'web' => 'nullable|url',
+            'facebook' => 'nullable|url',
+            'instagram' => 'nullable|url',
+            'x' => 'nullable|url',
+        ]);
+
+        DB::transaction(function () use ($request, $user) {
+
+            $user->update([
+                'name' => $request->usuario,
+                'email' => $request->email,
+            ]);
+
+            $perfil = $user->perfil;
+
+            $perfil->update([
+                'bio' => $request->bio,
+                'nombres' => $request->nombres,
+                'apellidos' => $request->apellidos,
+                'genero' => $request->genero,
+                'fecha_nacimiento' => $request->fecha_nacimiento,
+                'pais' => $request->pais,
+                'ciudad' => $request->ciudad,
+                'telefono' => $request->telefono,
+                'web' => $request->web,
+                'facebook' => $request->facebook,
+                'instagram' => $request->instagram,
+                'x' => $request->x,
+            ]);
+
+        });
+
+        return back()->with('success', 'Perfil actualizado correctamente');
+
+    }
+    
 }

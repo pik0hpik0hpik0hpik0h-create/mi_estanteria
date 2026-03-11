@@ -4,9 +4,9 @@
 
 @include('components.navbar')
 
-<div class="divider mt-20 md:mt-30"></div>
+<div class="mt-15 md:mt-25"></div>
 
-<div class="flex justify-left md:justify-center gap-x-8 px-8">
+<div class="flex justify-left md:justify-center gap-x-8 px-8 intersect:motion-preset-focus">
 
     <div class="text-base-content py-8 w-3/5 hidden md:block">
         <h1 class="text-5xl font-serif">Perfil</h1>
@@ -33,13 +33,13 @@
 
 <div class="md:flex justify-center px-8 gap-8 mb-8">
 
-    <div class="border border-base-content/20 w-full md:w-3/5 rounded-md p-8">
+    <div class="border border-base-content/20 w-full md:w-3/5 rounded-md p-8 intersect:motion-preset-slide-right">
 
         <div class="text-left">
             <h1 class="text-xl font-serif">Datos de perfil</h1>
         </div>
 
-        <form novalidate autocomplete="off" method="POST" action=" " class="font-inconsolata">
+        <form novalidate autocomplete="off" method="POST" action="{{ route('editar_perfil') }}" class="font-inconsolata">
             @csrf
 
             <div class="input-floating w-full mt-8">
@@ -122,8 +122,8 @@
             </div>
 
             <div class="w-full input-floating mt-4">
-                <input type="file" placeholder="Foto" class="input" id="foto_url" name="foto_url"/>
-                <label class="input-floating-label" for="foto_url">Foto de Perfil</label>
+                <input type="file" placeholder="Foto" class="input" id="avatar" name="avatar" accept="image/*"/>
+                <label class="input-floating-label" for="avatar">Foto de Perfil</label>
             </div>
 
             <div class="flex flex-row justify-between items-center gap-5 mt-4">
@@ -154,6 +154,16 @@
 
             </div>
 
+            @if ($errors->any())
+                <div class="font-inconsolata text-sm text-red-500 mt-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
             <div class="flex justify-center mt-8">
                 <button type="submit" class="btn btn-primary"><span class="icon-[tabler--edit]"></span>Editar Perfil</button>
             </div>
@@ -162,7 +172,7 @@
 
     </div>
 
-    <div class="flex flex-col border border-base-content/20 w-full md:w-2/5 rounded-md p-8 mt-8 md:mt-0">
+    <div class="flex flex-col border border-base-content/20 w-full md:w-2/5 rounded-md p-8 mt-8 md:mt-0 intersect:motion-preset-slide-left">
 
         <div class="text-left">
             <h1 class="text-xl font-serif">Tus Roles</h1>
@@ -186,18 +196,26 @@
         <div class="mt-8 sm:mt-auto">
 
             <div class="flex justify-center">
-                <button class="btn btn-secondary text-secondary-content font-inconsolata w-full text-sm"><span class="icon-[tabler--user-edit]"></span>Quiero ser Escritor</button>
+                <button class="btn btn-secondary text-secondary-content font-inconsolata w-full text-sm"><span class="icon-[tabler--writing]"></span>Quiero ser Escritor</button>
             </div>
 
             <div class="flex justify-center mt-4">
-                <button class="btn btn-accent text-accent-content font-inconsolata w-full text-sm"><span class="icon-[tabler--user-edit]"></span>Quiero ser Vendedor</button>
+                <button class="btn btn-accent text-accent-content font-inconsolata w-full text-sm"><span class="icon-[tabler--pig-money]"></span>Quiero ser Vendedor</button>
             </div>
         </div>
 
     </div>
 
-    
+</div>
 
+<div class="flex justify-end p-8 pt-0 intersect:motion-preset-focus">
+    <form method="POST" class="w-full md:w-auto" action="{{ route('logout') }}">
+        @csrf
+            <button class="btn btn-primary w-full md:w-auto" type="submit">
+                <span class="icon-[tabler--logout-2] size-5"></span>
+                    Salir
+            </button>
+    </form>
 </div>
 
 <script>

@@ -53,6 +53,7 @@ Route::middleware(['auth','not.verified'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
+    Route::post('/editar_perfil', [UsuarioController::class, 'editar'])->name('editar_perfil');
 
 });
 

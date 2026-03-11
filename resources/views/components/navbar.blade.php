@@ -28,7 +28,7 @@
 
                     @auth
                     <div class="mt-2 flex gap-2">
-                        <a class="btn btn-primary w-1/2 md:hidden text-sm md:text-lg" href="#">
+                        <a class="btn btn-primary w-1/2 md:hidden text-sm md:text-lg" href="{{ route('perfil') }}">
                             <div class="avatar">
                                 <div class="size-5 rounded-full">
                                     <img src="{{ Auth::user()->avatar }}" alt="avatar" />
@@ -53,7 +53,7 @@
 
                     <button class="btn md:hidden font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
 
-                    <li><a class="hover:text-primary text-sm md:text-lg" href="#">Inicio</a></li>
+                    <li><a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}">Inicio</a></li>
 
                     <li class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]">
                         <button type="button" class="hover:text-primary text-sm md:text-lg dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content">
@@ -63,12 +63,12 @@
 
                         <ul class="dropdown-menu dropdown-open:opacity-100 hidden bg-base-300/50 glass">
                             <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="#">Todos</a></li>
-                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="#">Novedades</a></li>
-                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="#">Más Vendidos</a></li>
+                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="{{ route('index') }}#mas_vendidos">Más Vendidos</a></li>
+                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="{{ route('index') }}#novedades">Novedades</a></li>
                         </ul>
                     </li>
 
-                    <li><a class="hover:text-primary text-sm md:text-lg" href="#">Contacto</a></li>
+                    <li><a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}#contacto">Contacto</a></li>
 
                 </ul>
 
@@ -81,7 +81,7 @@
                 @auth
                 <a href="{{ route('perfil') }}">
                     <div class="avatar">
-                        <div class="size-10 rounded-full border-2 border-base-300">
+                        <div class="size-10 rounded-full border-2 border-primary">
                             <img src="{{ Auth::user()->avatar }}" alt="avatar" />
                         </div>
                     </div>

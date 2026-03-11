@@ -20,7 +20,6 @@ class Perfil extends Model
         'telefono',
         'pais',
         'ciudad',
-        'foto_url',
         'bio',
         'web',
         'facebook',
