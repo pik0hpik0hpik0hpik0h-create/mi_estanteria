@@ -31,7 +31,17 @@
                         <a class="btn btn-primary w-1/2 md:hidden text-sm md:text-lg" href="{{ route('perfil') }}">
                             <div class="avatar">
                                 <div class="size-5 rounded-full">
-                                    <img src="{{ Auth::user()->avatar }}" alt="avatar" />
+                                    <img src="
+                                        @if(Auth::user()->avatar)
+                                            {{ str_contains(Auth::user()->avatar, 'http') 
+                                                ? Auth::user()->avatar 
+                                                : asset('storage/' . Auth::user()->avatar) }}
+                                        @else
+                                            {{ asset('assets/img/default_avatar.jpg') }}
+                                        @endif
+                                        "
+                                    alt="Avatar"
+                                    />
                                 </div>
                             </div>
                             Perfil
@@ -82,7 +92,17 @@
                 <a href="{{ route('perfil') }}">
                     <div class="avatar">
                         <div class="size-10 rounded-full border-2 border-primary">
-                            <img src="{{ Auth::user()->avatar }}" alt="avatar" />
+                            <img src="
+                                @if(Auth::user()->avatar)
+                                    {{ str_contains(Auth::user()->avatar, 'http') 
+                                        ? Auth::user()->avatar 
+                                        : asset('storage/' . Auth::user()->avatar) }}
+                                @else
+                                    {{ asset('assets/img/default_avatar.jpg') }}
+                                @endif
+                                "
+                                alt="Avatar"
+                            />
                         </div>
                     </div>
                 </a>

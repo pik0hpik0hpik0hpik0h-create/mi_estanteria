@@ -10,10 +10,11 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 
-class UsuarioController extends Controller
+class UsuarioController extends Controller 
 {
     // Mostrar el formulario de registro
     public function create()
@@ -150,6 +151,18 @@ class UsuarioController extends Controller
 
             $perfil = $user->perfil;
 
+            if ($request->hasFile('avatar')) {
+
+                if ($user->avatar && !str_contains($user->avatar, 'googleusercontent')) {
+                    Storage::disk('public')->delete($user->avatar);
+                }
+
+                $ruta = $request->file('avatar')->store('avatars', 'public');
+
+                $user->avatar = $ruta;
+                $user->save();
+            }
+
             $perfil->update([
                 'bio' => $request->bio,
                 'nombres' => $request->nombres,
@@ -163,6 +176,7 @@ class UsuarioController extends Controller
                 'facebook' => $request->facebook,
                 'instagram' => $request->instagram,
                 'x' => $request->x,
+                'avatar' => $perfil->avatar ?? null, 
             ]);
 
         });

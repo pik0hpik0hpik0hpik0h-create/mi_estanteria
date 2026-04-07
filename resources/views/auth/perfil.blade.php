@@ -23,7 +23,17 @@
                 
         <div class="avatar flex items-center">
             <div class="size-16 rounded-full border-4 border-primary">
-                <img src="{{ Auth::user()->avatar }}" alt="avatar" />
+                <img src="
+                        @if(Auth::user()->avatar)
+                            {{ str_contains(Auth::user()->avatar, 'http') 
+                                ? Auth::user()->avatar 
+                                : asset('storage/' . Auth::user()->avatar) }}
+                        @else
+                            {{ asset('assets/img/default_avatar.jpg') }}
+                        @endif
+                        "
+                    alt="Avatar"
+                />
             </div>
         </div>
 
@@ -39,7 +49,7 @@
             <h1 class="text-xl font-serif">Datos de perfil</h1>
         </div>
 
-        <form novalidate autocomplete="off" method="POST" action="{{ route('editar_perfil') }}" class="font-inconsolata">
+        <form novalidate autocomplete="off" enctype="multipart/form-data" method="POST" action="{{ route('editar_perfil') }}" class="font-inconsolata">
             @csrf
 
             <div class="input-floating w-full mt-8">
@@ -66,38 +76,36 @@
 
         
 
-                <div class="w-full mt-4">
-                    <select
-                        data-select='{
-                            "placeholder": "Género",
-                            "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
-                            "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40",
-                            "dropdownClasses": "advance-select-menu bg-base-200",
-                            "optionClasses": "advance-select-option selected:select-active",
-                            "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
-                            "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>"
-                            }'
-                            class="hidden w-full" name="genero" value="{{ $user->perfil->apellidos }}"
-                            > 
-                            <option value="">Elija</option>
+            <div class="w-full mt-4">
+                <select
+                    data-select='{
+                        "placeholder": "Género",
+                        "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
+                        "toggleClasses": "advance-select-toggle select-disabled:pointer-events-none select-disabled:opacity-40",
+                        "dropdownClasses": "advance-select-menu bg-base-200",
+                        "optionClasses": "advance-select-option selected:select-active",
+                        "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block \"></span></div>",
+                        "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2 \"></span>"
+                        }'
+                        class="hidden w-full" name="genero" value="{{ $user->perfil->apellidos }}"
+                        > 
+                        <option value="">Elija</option>
 
-                            <option value="M" {{ $user->perfil->genero == 'M' ? 'selected' : '' }}>
-                                Masculino
-                            </option>
+                        <option value="M" {{ $user->perfil->genero == 'M' ? 'selected' : '' }}>
+                            Masculino
+                        </option>
 
-                            <option value="F" {{ $user->perfil->genero == 'F' ? 'selected' : '' }}>
-                                Femenino
-                            </option>
-                    </select>
-                </div>
+                        <option value="F" {{ $user->perfil->genero == 'F' ? 'selected' : '' }}>
+                            Femenino
+                        </option>
+                </select>
+            </div>
 
-                <div class="input-floating w-full mt-4">
-                    <input type="text" placeholder="AAAA-MM-DD" class="input" id="flatpickr-floating" name="fecha_nacimiento" value="{{ $user->perfil->fecha_nacimiento }}"/>
-                    <label class="input-floating-label" for="flatpickr-floating">Nacimiento</label>
-                </div>
+            <div class="input-floating w-full mt-4">
+                <input type="text" placeholder="AAAA-MM-DD" class="input" id="flatpickr-floating" name="fecha_nacimiento" value="{{ $user->perfil->fecha_nacimiento }}"/>
+                <label class="input-floating-label" for="flatpickr-floating">Nacimiento</label>
+            </div>
                     
-         
-
             <div class="w-full mt-4">
                 <select id="pais" name="pais" >
                     <option value="">Elija</option>
@@ -121,9 +129,30 @@
                 </div>
             </div>
 
-            <div class="w-full input-floating mt-4">
-                <input type="file" placeholder="Foto" class="input" id="avatar" name="avatar" accept="image/*"/>
-                <label class="input-floating-label" for="avatar">Foto de Perfil</label>
+            <div class="w-full mt-4 flex items-center gap-x-2">
+
+                <div class="avatar">
+                    <div class="size-10 rounded-full border-2 border-primary">
+                    <img id="preview-avatar"
+                        src="
+                        @if(Auth::user()->avatar)
+                            {{ str_contains(Auth::user()->avatar, 'http') 
+                                ? Auth::user()->avatar 
+                                : asset('storage/' . Auth::user()->avatar) }}
+                        @else
+                            {{ asset('assets/img/default_avatar.jpg') }}
+                        @endif
+                        "
+                        alt="Avatar"
+                    />
+                    </div>
+                </div>
+
+                <div class="input-floating">
+                    <input type="file" placeholder="Foto" class="input" id="avatar" name="avatar" accept="image/*"/>
+                    <label class="input-floating-label" for="avatar">Foto de Perfil</label>
+                </div>
+
             </div>
 
             <div class="flex flex-row justify-between items-center gap-5 mt-4">
@@ -220,6 +249,17 @@
 
 <script>
     const paisSeleccionado = "{{ old('pais', $user->perfil->pais ?? '') }}";
+</script>
+
+<script>
+    document.getElementById('avatar').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+
+        if (file) {
+            const preview = document.getElementById('preview-avatar');
+            preview.src = URL.createObjectURL(file);
+        }
+    });
 </script>
 
 <script>
