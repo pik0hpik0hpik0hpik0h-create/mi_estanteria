@@ -59,4 +59,9 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasMany(Rol::class, 'user_id');
     }
+
+    public function writer()
+    {
+        return $this->hasOne(Writer::class);
+    }
 }
