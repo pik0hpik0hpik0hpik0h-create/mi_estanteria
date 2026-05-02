@@ -45,41 +45,46 @@
 
 <div class="md:flex justify-center px-8 gap-8 mb-8">
 
-  <!-- 💳 TARJETA WALLET -->
   <div class="font-inconsolata stats w-full md:w-3/5 shadow-md bg-linear-to-r from-accent/30 to-accent rounded-md p-6 motion-preset-slide-right">
 
-    <!-- SALDO -->
     <div class="stat">
       <div class="stat-title">Saldo disponible</div>
       <div class="stat-value text-3xl font-serif">
-        $320.50
+        ${{ number_format($wallet->saldo_disponible ?? 0, 2) }}
       </div>
       <div class="stat-desc">
         Fondos listos para retirar
       </div>
     </div>
 
-    <!-- ÚLTIMA SOLICITUD -->
     <div class="stat text-right">
       <div class="stat-title">Último retiro</div>
       <div class="stat-value text-xl text-primary font-serif">
-        $120.00
+        ${{ $lastWithdraw ? number_format($lastWithdraw->monto, 2) : '0.00' }}
       </div>
       <div class="stat-desc">
-        En revisión
+        {{ $lastWithdraw ? ucfirst($lastWithdraw->estado) : 'Sin solicitudes' }}
       </div>
     </div>
 
   </div>
 
-  <!-- 🧾 FORMULARIO RETIRO -->
   <div class="w-full border border-base-content/20 md:w-2/5 rounded-md p-6 motion-preset-slide-left mt-8 md:mt-0">
 
-    <h1 class="text-xl font-serif mb-4">Solicitar retiro</h1>
+    @if($hasPending)
 
-    <!-- 🚫 Simulando que NO hay pendiente -->
+    <div class="bg-warning font-inconsolata p-5 rounded-md h-full flex items-center">
+        <div class="text-warning-content">
+            Ya tienes una solicitud en proceso. Espera a que sea aprobada.
+        </div>
+    </div>
+
+    @else
+
+    <h1 class="text-xl font-serif mb-4">Solicitar retiro</h1>
     
-    <form>
+    <form method="POST" action="{{ route('writer.withdraw.store') }}">
+        @csrf
 
         <div class="input w-full">
   
@@ -93,11 +98,11 @@
                 type="text"
                 placeholder="0.00"
                 class="ps-3"
-                id="amount"
-                name="amount"
+                id="monto"
+                name="monto"
                 />
 
-                <label class="input-floating-label" for="amount">
+                <label class="input-floating-label" for="monto">
                 Monto
                 </label>
 
@@ -107,8 +112,19 @@
 
       <button type="submit" class="btn btn-accent w-full mt-4"><span class="icon-[tabler--brand-paypal]"></span>Solicitar retiro</button>
 
-      
+      @if ($errors->any())
+        <div class="font-inconsolata text-sm text-red-500 mt-3">
+                    <ul>
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+    @endif
+
     </form>
+
+    @endif
 
   </div>
 

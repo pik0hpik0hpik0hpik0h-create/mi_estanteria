@@ -110,9 +110,26 @@ class UsuarioController extends Controller
     // PERFIL DE USUARIO
     public function perfil()
     {
-        $user = Auth::user()->load('roles', 'perfil');;
+        $user = Auth::user()->load('roles', 'perfil', 'writer.wallet');
 
-        return view('auth.perfil', compact('user'));
+        $wallet = $user->writer->wallet ?? null;
+
+        $writer = $user->writer;
+
+        $lastWithdraw = $writer?->withdrawRequests()
+            ->latest()
+            ->first();
+
+        $hasPending = $writer?->withdrawRequests()
+            ->where('estado', 'pendiente')
+            ->exists();
+
+        return view('auth.perfil', compact(
+            'user',
+            'wallet',
+            'lastWithdraw',
+            'hasPending'
+        ));
     }
 
     // EDITAR PERFIL DE USUARIO

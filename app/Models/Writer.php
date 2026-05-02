@@ -40,13 +40,18 @@ class Writer extends Model
         return $this->hasOne(Perfil::class, 'user_id', 'user_id');
     }
 
-    public function paypalAccount()
+    public function payAccount()
     {
-        return $this->hasOne(WriterPaypalAccount::class);
+        return $this->hasOne(\App\Models\WriterPaypalAccount::class, 'writer_id', 'id');
     }
 
     public function wallet()
     {
-        return $this->hasOne(WriterWallet::class);
+        return $this->hasOne(\App\Models\WriterWallet::class, 'writer_id');
+    }
+
+    public function withdrawRequests()
+    {
+        return $this->hasMany(\App\Models\WithdrawRequest::class, 'writer_id');
     }
 }

@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\WriterController;
+use App\Http\Controllers\WriterWithdrawController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -57,6 +58,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/editar_perfil', [UsuarioController::class, 'editar'])->name('editar_perfil');
     Route::get('/perfil/escritor', [WriterController::class, 'create'])->name('writers_create');
     Route::post('/perfil/escritor', [WriterController::class, 'store'])->name('writers_store');
+
+    Route::post('/writer/withdraw', [WriterWithdrawController::class, 'store'])->name('writer.withdraw.store');
 
 });
 

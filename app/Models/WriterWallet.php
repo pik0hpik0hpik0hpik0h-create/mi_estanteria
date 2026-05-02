@@ -36,4 +36,14 @@ class WriterWallet extends Model
     {
         return $this->belongsTo(Writer::class);
     }
+
+    public function withdrawRequests()
+    {
+        return $this->hasMany(WithdrawRequest::class, 'wallet_id');
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(WalletTransaction::class, 'wallet_id');
+    }
 }

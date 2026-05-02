@@ -62,7 +62,7 @@ class User extends Authenticatable implements MustVerifyEmail
 
     public function writer()
     {
-        return $this->hasOne(Writer::class);
+        return $this->hasOne(\App\Models\Writer::class);
     }
 
     public function isWriter()
