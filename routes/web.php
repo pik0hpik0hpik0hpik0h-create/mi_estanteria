@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\WriterController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -20,7 +21,7 @@ Route::get('/', function () {
 // RUTAS GENERALES
 Route::get('/login', [UsuarioController::class, 'form'])->name('login');
 Route::post('/login', [UsuarioController::class, 'login'])->name('login.submit');
-Route::post('/logout', [UsuarioController::class, 'logout'])->name('logout');
+Route::post('/logout', [UsuarioController::class, 'logout'])->name('logout'); 
 
 Route::get('/register', [UsuarioController::class, 'create'])->name('register.create');
 Route::post('/register', [UsuarioController::class, 'store'])->name('register.store');
@@ -54,6 +55,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
     Route::post('/editar_perfil', [UsuarioController::class, 'editar'])->name('editar_perfil');
+    Route::get('/perfil/escritor', [WriterController::class, 'create'])->name('writers_create');
+    Route::post('/perfil/escritor', [WriterController::class, 'store'])->name('writers_store');
 
 });
 

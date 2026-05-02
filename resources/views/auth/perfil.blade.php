@@ -225,7 +225,7 @@
         <div class="mt-8 sm:mt-auto">
 
             <div class="flex justify-center">
-                <button class="btn btn-secondary text-secondary-content font-inconsolata w-full text-sm"><span class="icon-[tabler--writing]"></span>Quiero ser Escritor</button>
+                <a href="{{ route('writers_create') }}" class="btn btn-secondary text-secondary-content font-inconsolata w-full text-sm"><span class="icon-[tabler--writing]"></span>Quiero ser Escritor</a>
             </div>
 
             <div class="flex justify-center mt-4">
