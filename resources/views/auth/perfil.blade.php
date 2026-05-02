@@ -6,7 +6,7 @@
 
 <div class="mt-15 md:mt-25"></div>
 
-<div class="flex justify-left md:justify-center gap-x-8 px-8 intersect:motion-preset-focus">
+<div class="flex justify-left md:justify-center gap-x-8 px-8 motion-preset-focus">
 
     <div class="text-base-content py-8 w-3/5 hidden md:block">
         <h1 class="text-5xl font-serif">Perfil</h1>
@@ -41,9 +41,84 @@
 
 </div>
 
+@if(auth()->check() && auth()->user()->isWriter())
+
 <div class="md:flex justify-center px-8 gap-8 mb-8">
 
-    <div class="border border-base-content/20 w-full md:w-3/5 rounded-md p-8 intersect:motion-preset-slide-right">
+  <!-- 💳 TARJETA WALLET -->
+  <div class="font-inconsolata stats w-full md:w-3/5 shadow-md bg-linear-to-r from-accent/30 to-accent rounded-md p-6 motion-preset-slide-right">
+
+    <!-- SALDO -->
+    <div class="stat">
+      <div class="stat-title">Saldo disponible</div>
+      <div class="stat-value text-3xl font-serif">
+        $320.50
+      </div>
+      <div class="stat-desc">
+        Fondos listos para retirar
+      </div>
+    </div>
+
+    <!-- ÚLTIMA SOLICITUD -->
+    <div class="stat text-right">
+      <div class="stat-title">Último retiro</div>
+      <div class="stat-value text-xl text-primary font-serif">
+        $120.00
+      </div>
+      <div class="stat-desc">
+        En revisión
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 🧾 FORMULARIO RETIRO -->
+  <div class="w-full border border-base-content/20 md:w-2/5 rounded-md p-6 motion-preset-slide-left mt-8 md:mt-0">
+
+    <h1 class="text-xl font-serif mb-4">Solicitar retiro</h1>
+
+    <!-- 🚫 Simulando que NO hay pendiente -->
+    
+    <form>
+
+        <div class="input w-full">
+  
+            <span class="text-base-content/80 my-auto shrink-0">
+                $
+            </span>
+
+            <div class="input-floating grow">
+                
+                <input 
+                type="text"
+                placeholder="0.00"
+                class="ps-3"
+                id="amount"
+                name="amount"
+                />
+
+                <label class="input-floating-label" for="amount">
+                Monto
+                </label>
+
+            </div>
+
+        </div>
+
+      <button type="submit" class="btn btn-accent w-full mt-4"><span class="icon-[tabler--brand-paypal]"></span>Solicitar retiro</button>
+
+      
+    </form>
+
+  </div>
+
+</div>
+
+@endif
+
+<div class="md:flex justify-center px-8 gap-8 mb-8">
+
+    <div class="border border-base-content/20 w-full md:w-3/5 rounded-md p-8 motion-preset-slide-right">
 
         <div class="text-left">
             <h1 class="text-xl font-serif">Datos de perfil</h1>
@@ -201,7 +276,7 @@
 
     </div>
 
-    <div class="flex flex-col border border-base-content/20 w-full md:w-2/5 rounded-md p-8 mt-8 md:mt-0 intersect:motion-preset-slide-left">
+    <div class="flex flex-col border border-base-content/20 w-full md:w-2/5 rounded-md p-8 mt-8 md:mt-0 motion-preset-slide-left">
 
         <div class="text-left">
             <h1 class="text-xl font-serif">Tus Roles</h1>
@@ -211,9 +286,10 @@
             Ahora mismo tienes permisos como
             @foreach($user->roles as $rol)
                 <span class="font-inconsolata text-primary">
-                    <span class="font-black">{{ $rol->rol }}</span><span class="text-base-content">.</span>
+                    <span class="font-black">{{ $rol->rol }}</span><span class="text-base-content"></span>
                 </span>@if(!$loop->last), @endif
             @endforeach
+            .
         </p>
 
         <div class="divider my-8 font-inconsolata">Modificar roles</div>

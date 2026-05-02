@@ -64,4 +64,13 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Writer::class);
     }
+
+    public function isWriter()
+    {
+        return $this->roles()
+            ->where('rol', 'escritor')
+            ->where('estado', 1)
+            ->exists();
+    }
+
 }
