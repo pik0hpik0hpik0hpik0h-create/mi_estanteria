@@ -54,4 +54,9 @@ class Writer extends Model
     {
         return $this->hasMany(\App\Models\WithdrawRequest::class, 'writer_id');
     }
+
+    public function payouts()
+    {
+        return $this->hasMany(\App\Models\WriterPayout::class, 'writer_id');
+    }
 }

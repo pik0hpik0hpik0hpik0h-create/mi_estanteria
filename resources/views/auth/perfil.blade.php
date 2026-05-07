@@ -76,12 +76,16 @@
     <div class="bg-warning font-inconsolata p-5 rounded-md h-full flex items-center">
         <div class="text-warning-content">
             Ya tienes una solicitud en proceso. Espera a que sea aprobada.
+            <a href="{{ route('writer.withdraw_history') }}" class="font-inconsolata text-warning-content link text-center">Historial de retiros</a>
         </div>
     </div>
 
     @else
 
-    <h1 class="text-xl font-serif mb-4">Solicitar retiro</h1>
+    <div class="flex justify-between mb-4">
+        <h1 class="text-xl font-serif text-center">Solicitar retiro</h1>
+        <a href="{{ route('writer.withdraw_history') }}" class="font-inconsolata link text-center">Historial de retiros</a>
+    </div>
     
     <form method="POST" action="{{ route('writer.withdraw.store') }}">
         @csrf

@@ -60,6 +60,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/perfil/escritor', [WriterController::class, 'store'])->name('writers_store');
 
     Route::post('/writer/withdraw', [WriterWithdrawController::class, 'store'])->name('writer.withdraw.store');
+    Route::get('/writer/withdraw/history', [WriterWithdrawController::class, 'historial_solicitudes_retiro'])->name('writer.withdraw_history');
 
 });
 

@@ -2,13 +2,54 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
+use App\Models\User; 
+use App\Models\Perfil;
+use App\Models\Rol;
+use App\Services\UserService;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use App\Models\WithdrawRequest;
 use App\Models\WalletTransaction;
 
 class WriterWithdrawController extends Controller
 {
+
+    // HISTORIAL DE SOLICITUDES DE RETIRO
+    public function historial_solicitudes_retiro()
+    {
+        $user = Auth::user()->load('roles', 'perfil', 'writer.wallet');
+
+        $wallet = $user->writer->wallet ?? null;
+
+        $writer = $user->writer;
+
+        $lastWithdraw = $writer?->withdrawRequests()
+            ->latest()
+            ->first();
+
+        $hasPending = $writer?->withdrawRequests()
+            ->where('estado', 'pendiente')
+            ->exists();
+
+        $payouts = $writer?->withdrawRequests()
+        ->latest()
+        ->paginate(10);
+
+        return view('auth.historial_retiros', compact(
+            'user',
+            'wallet',
+            'lastWithdraw',
+            'hasPending',
+            'payouts'
+        ));
+    }
+
+    // REGISTRO COMO ESCRITOR
     public function store(Request $request)
     {
          
