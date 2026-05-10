@@ -5,6 +5,7 @@ use App\Http\Controllers\UsuarioController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\WriterController;
 use App\Http\Controllers\WriterWithdrawController;
+use App\Http\Controllers\BookController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -56,11 +57,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/perfil', [UsuarioController::class, 'perfil'])->name('perfil');
     Route::post('/editar_perfil', [UsuarioController::class, 'editar'])->name('editar_perfil');
+
     Route::get('/perfil/escritor', [WriterController::class, 'create'])->name('writers_create');
     Route::post('/perfil/escritor', [WriterController::class, 'store'])->name('writers_store');
 
     Route::post('/writer/withdraw', [WriterWithdrawController::class, 'store'])->name('writer.withdraw.store');
     Route::get('/writer/withdraw/history', [WriterWithdrawController::class, 'historial_solicitudes_retiro'])->name('writer.withdraw_history');
+
+    Route::get('/writer/libros/subir', [BookController::class, 'create'])->name('books.create');
+    Route::post('/writer/libros/subir', [BookController::class, 'store'])->name('books.store');
 
 });
 
