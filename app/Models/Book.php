@@ -5,7 +5,46 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 
 class Book extends Model
+
 {
+
+     protected $fillable = [
+
+        'writer_id',
+        'book_category_id',
+
+        'titulo',
+        'slug',
+
+        'descripcion_corta',
+        'descripcion',
+
+        'portada',
+
+        'tipo',
+        'formato',
+
+        'idioma',
+        'isbn',
+
+        'paginas',
+        'fecha_publicacion',
+
+        'precio',
+        'stock',
+
+        'estado',
+
+        'visibilidad',
+        'destacado',
+
+        'total_ventas',
+        'promedio_rating',
+
+        'meta_title',
+        'meta_description',
+    ];
+
     public function writer()
     {
         return $this->belongsTo(Writer::class);

@@ -107,7 +107,7 @@
                                     "placeholder": "Categoría",
                                     "toggleTag": "<button type=\"button\" aria-expanded=\"false\"></button>",
                                     "toggleClasses": "advance-select-toggle w-full input text-left",
-                                    "dropdownClasses": "advance-select-menu bg-base-200",
+                                    "dropdownClasses": "advance-select-menu bg-base-200 h-50 overflow-y-auto",
                                     "optionClasses": "advance-select-option selected:select-active",
                                     "optionTemplate": "<div class=\"flex justify-between items-center w-full\"><span data-title></span><span class=\"icon-[tabler--check] shrink-0 size-4 text-primary hidden selected:block\"></span></div>",
                                     "extraMarkup": "<span class=\"icon-[tabler--caret-up-down] shrink-0 size-4 text-base-content absolute top-1/2 end-3 -translate-y-1/2\"></span>"
@@ -128,14 +128,16 @@
 
                         </div>
 
-                        <div class="input-floating">
-                            <textarea name="descripcion_corta" rows="2" class="input" placeholder=" " required></textarea>
-                            <label class="input-floating-label">Descripción corta</label>
-                        </div>
+                        <div class="flex gap-5">
+                            <div class="input-floating">
+                                <textarea name="descripcion_corta" rows="2" class="input" placeholder=" " required></textarea>
+                                <label class="input-floating-label">Dscrp. corta</label>
+                            </div>
 
-                        <div class="input-floating">
-                            <textarea name="descripcion" rows="4" class="input" placeholder=" " required></textarea>
-                            <label class="input-floating-label">Descripción completa</label>
+                            <div class="input-floating">
+                                <textarea name="descripcion" rows="4" class="input" placeholder=" " required></textarea>
+                                <label class="input-floating-label">Dscrp. larga</label>
+                            </div>
                         </div>
 
                         <div class="input-floating">
@@ -143,14 +145,16 @@
                             <label class="input-floating-label">Idioma</label>
                         </div>
 
-                        <div class="input-floating">
-                            <input type="text" name="isbn" class="input" placeholder=" ">
-                            <label class="input-floating-label">ISBN</label>
-                        </div>
+                        <div class="flex gap-5">
+                            <div class="input-floating">
+                                <input type="text" name="isbn" class="input" placeholder=" ">
+                                <label class="input-floating-label">ISBN</label>
+                            </div>
 
-                        <div class="input-floating">
-                            <input type="number" name="paginas" class="input" placeholder=" ">
-                            <label class="input-floating-label">Número de páginas</label>
+                            <div class="input-floating">
+                                <input type="number" name="paginas" class="input" placeholder=" ">
+                                <label class="input-floating-label">Nº de páginas</label>
+                            </div>
                         </div>
 
                     </div>
@@ -176,8 +180,8 @@
 
                                 <option value="">Selecciona</option>
                                 <option value="ebook">Ebook</option>
-                                <option value="fisico">Físico</option>
-                                <option value="ambos">Ambos</option>
+                                <option disabled value="fisico">Físico</option>
+                                <option disabled value="ambos">Ambos</option>
 
                             </select>
 
@@ -200,8 +204,8 @@
 
                                 <option value="">Selecciona</option>
                                 <option value="pdf">PDF</option>
-                                <option value="epub">EPUB</option>
-                                <option value="mobi">MOBI</option>
+                                <option disabled value="epub">EPUB</option>
+                                <option disabled value="mobi">MOBI</option>
 
                             </select>
 
@@ -227,19 +231,67 @@
                     <!-- PASO 3: ARCHIVOS -->
                     <div data-stepper-content-item='{"index":3}' style="display:none" class="space-y-4">
 
-                        <div class="text-left">
-                            <label class="text-sm mb-2 block">Archivo principal</label>
-                            <input type="file" name="archivo_completo" class="file-input file-input-bordered w-full">
+                        <!-- Archivo principal -->
+                        <div class="text-left space-y-2">
+
+                            <label class="text-sm block">
+                                Archivo principal
+                            </label>
+
+                            <input 
+                                type="file"
+                                name="archivo_completo"
+                                class="input input-xs w-full"
+                                aria-label="Archivo principal"
+                                accept=".pdf,.epub,.mobi"
+                            >
+
+                            <p class="text-xs text-base-content/60">
+                                PDF, EPUB o MOBI
+                            </p>
+
                         </div>
 
-                        <div class="text-left">
-                            <label class="text-sm mb-2 block">Preview del libro</label>
-                            <input type="file" name="archivo_preview" class="file-input file-input-bordered w-full">
+                        <!-- Preview -->
+                        <div class="text-left space-y-2">
+
+                            <label class="text-sm block">
+                                Preview del libro
+                            </label>
+
+                            <input 
+                                type="file"
+                                name="archivo_preview"
+                                class="input input-xs w-full"
+                                aria-label="Preview del libro"
+                                accept=".pdf"
+                            >
+
+                            <p class="text-xs text-base-content/60">
+                                Vista previa gratuita
+                            </p>
+
                         </div>
 
-                        <div class="text-left">
-                            <label class="text-sm mb-2 block">Archivos extra</label>
-                            <input type="file" name="archivos_extra[]" multiple class="file-input file-input-bordered w-full">
+                        <!-- Extras -->
+                        <div class="text-left space-y-2">
+
+                            <label class="text-sm block">
+                                Archivos extra
+                            </label>
+
+                            <input 
+                                type="file"
+                                name="archivos_extra[]"
+                                multiple
+                                class="input input-xs w-full"
+                                aria-label="Archivos extra"
+                            >
+
+                            <p class="text-xs text-base-content/60">
+                                Recursos adicionales
+                            </p>
+
                         </div>
 
                     </div>
@@ -247,14 +299,47 @@
                     <!-- PASO 4: IMÁGENES -->
                     <div data-stepper-content-item='{"index":4}' style="display:none" class="space-y-4">
 
-                        <div class="text-left">
-                            <label class="text-sm mb-2 block">Portada principal</label>
-                            <input type="file" name="portada" class="file-input file-input-bordered w-full">
+                        <!-- Portada -->
+                        <div class="text-left space-y-2">
+
+                            <label class="text-sm block">
+                                Portada principal
+                            </label>
+
+                            <input 
+                                type="file"
+                                name="portada"
+                                class="input input-xs w-full"
+                                aria-label="Portada principal"
+                                accept="image/*"
+                            >
+
+                            <p class="text-xs text-base-content/60">
+                                Imagen principal del libro
+                            </p>
+
                         </div>
 
-                        <div class="text-left">
-                            <label class="text-sm mb-2 block">Galería del libro</label>
-                            <input type="file" name="imagenes[]" multiple class="file-input file-input-bordered w-full">
+                        <!-- Galería -->
+                        <div class="text-left space-y-2">
+
+                            <label class="text-sm block">
+                                Galería del libro
+                            </label>
+
+                            <input 
+                                type="file"
+                                name="imagenes[]"
+                                multiple
+                                class="input input-xs w-full"
+                                aria-label="Galería del libro"
+                                accept="image/*"
+                            >
+
+                            <p class="text-xs text-base-content/60">
+                                Puedes subir múltiples imágenes
+                            </p>
+
                         </div>
 
                     </div>

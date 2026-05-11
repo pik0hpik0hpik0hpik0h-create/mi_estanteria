@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User; 
 use App\Models\Perfil;
 use App\Models\Rol;
+use App\Models\Book;
 use App\Services\UserService;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Support\Facades\DB;
@@ -124,11 +125,17 @@ class UsuarioController extends Controller
             ->where('estado', 'pendiente')
             ->exists();
 
+        $libros = Book::with('category')
+            ->where('writer_id', $writer->id)
+            ->latest()
+            ->get();
+
         return view('auth.perfil', compact(
             'user',
             'wallet',
             'lastWithdraw',
-            'hasPending'
+            'hasPending',
+            'libros'
         ));
     }
 

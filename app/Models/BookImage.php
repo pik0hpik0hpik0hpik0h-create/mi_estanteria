@@ -6,6 +6,16 @@ use Illuminate\Database\Eloquent\Model;
 
 class BookImage extends Model
 {
+
+    protected $fillable = [
+
+        'book_id',
+
+        'imagen',
+
+        'orden',
+    ];
+    
     public function book()
     {
         return $this->belongsTo(Book::class);

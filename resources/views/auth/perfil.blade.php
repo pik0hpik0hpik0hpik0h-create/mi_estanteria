@@ -136,6 +136,77 @@
 
 @endif
 
+<div class="mx-8 mb-8 bg-base-300 p-6.5 rounded-xl flex items-center justify-between gap-10 overflow-x-auto motion-preset-slide-left">
+
+    @foreach($libros as $libro)
+
+        <div class="bg-base-200 rounded-lg h-90 min-w-65 duration-300 relative">
+
+            <button class="btn btn-sm btn-square absolute border-none top-2 right-2 z-10 bg-primary">
+                <span class="icon-[tabler--pencil] text-primary-content"></span>
+            </button>
+
+            <div class="flex justify-center p-5">
+
+                <img 
+                    src="{{ $libro->portada 
+                        ? asset('storage/' . $libro->portada) 
+                        : asset('assets/img/book_cover_mockup.jpg') }}"
+                    class="w-28 h-40 object-cover rounded-xs"
+                    alt="{{ $libro->titulo }}"
+                >
+
+            </div>
+
+            <div class="px-5">
+
+                <h1 class="font-serif text-lg">
+                    {{ $libro->titulo }}
+                </h1>
+
+                <h2 class="font-inconsolata text-sm">
+                    {{ $libro->category->nombre ?? 'Sin categoría' }}
+                </h2>
+
+                <h2 class="font-inconsolata text-sm mt-10">
+                    Autor: {{ $libro->writer->nombre_pluma ?? 'Desconocido' }}
+                </h2>
+
+            </div>
+
+            <div class="px-5 mt-5 flex items-center justify-between">
+
+                <div class="flex items-center gap-2">
+
+                    <div 
+                        class="flex raty-read-only"
+                        data-score="{{ $libro->destacado ?? 0 }}">
+                    </div>
+
+                    <div class="-translate-y-1 rounded-field text-xs font-semibold font-inconsolata">
+                        {{ $libro->destacado ?? 0 }}
+                    </div>
+
+                </div>
+
+                <div>
+
+                    <h2 class="font-inconsolata text-sm font-black">
+                        ${{ number_format($libro->precio, 2) }}
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        @endforeach
+
+</div>
+
+
+
 <div class="md:flex justify-center px-8 gap-8 mb-8">
 
     <div class="border border-base-content/20 w-full md:w-3/5 rounded-md p-8 motion-preset-slide-right">
@@ -400,6 +471,58 @@
             });
 
     });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        document.querySelectorAll('.raty-read-only').forEach(function (element) {
+
+            const score = element.dataset.score;
+
+            const rating = new Raty(element, {
+                half: true,
+                starType: 'i',
+                starOff: 'icon-[tabler--star-filled] opacity-20 size-4',
+                starHalf: 'icon-[tabler--star-half-filled] size-4 text-primary',
+                starOn: 'icon-[tabler--star-filled] size-4 text-primary',
+                readOnly: true,
+                score: score
+            });
+
+            rating.init();
+
+                // Mostrar el score al lado
+            const scoreContainer = element.parentElement.querySelector('.raty-score');
+            if (scoreContainer) {
+                scoreContainer.textContent = score;
+            }
+
+        });
+
+    });
+</script>
+
+<script>
+    window.addEventListener('load', function () {
+        const animationButtons = document.querySelectorAll('.animation-button')
+        const box = document.getElementById('animated-box')
+
+        animationButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            const animationClass = button.value
+
+            // Remove all existing motion- classes
+            const currentClasses = Array.from(box.classList)
+            const motionClasses = currentClasses.filter(className => className.startsWith('motion-'))
+            motionClasses.forEach(className => box.classList.remove(className))
+
+            // Temporarily remove the animation class to re-trigger it
+            void box.offsetWidth // Trigger reflow to allow re-adding the class
+            box.classList.add(animationClass, 'motion-duration-1000')
+            })
+        })
+    })
 </script>
 
 @endsection
