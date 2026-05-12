@@ -281,6 +281,7 @@
                             </label>
 
                             <input 
+                                disabled
                                 type="file"
                                 name="archivos_extra[]"
                                 multiple
@@ -328,6 +329,7 @@
                             </label>
 
                             <input 
+                                disabled
                                 type="file"
                                 name="imagenes[]"
                                 multiple

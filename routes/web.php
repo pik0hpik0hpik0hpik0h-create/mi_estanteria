@@ -67,6 +67,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/writer/libros/subir', [BookController::class, 'create'])->name('books.create');
     Route::post('/writer/libros/subir', [BookController::class, 'store'])->name('books.store');
 
+    Route::get('/libros/{book}', [BookController::class, 'show'])->name('books.show');
+
 });
 
 

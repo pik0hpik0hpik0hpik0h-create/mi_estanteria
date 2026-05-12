@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Support\Facades\Auth;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -37,6 +39,32 @@ class BookController extends Controller
 
         return view('writers.subir_libro', compact('categories'));
     }
+    /*
+    |--------------------------------------------------------------------------
+    | VISTA DE LIBRO
+    |--------------------------------------------------------------------------
+    */
+
+    public function show(Book $book)
+    {
+        $book->load([
+            'category',
+            'writer.user'
+        ]);
+
+        $canEdit = false;
+
+        if (Auth::check() && $book->writer) {
+
+            $canEdit = Auth::id() === $book->writer->user_id;
+
+        }
+
+        return view('books.show_book', compact(
+            'book',
+            'canEdit'
+        ));
+    }
 
     /*
     |--------------------------------------------------------------------------
@@ -64,7 +92,7 @@ class BookController extends Controller
 
             'idioma' => 'nullable|string|max:100',
 
-            'isbn' => 'nullable|string|max:100',
+            'isbn' => 'nullable|string|max:100|unique:books,isbn',
 
             'paginas' => 'nullable|integer|min:1',
 
@@ -82,7 +110,7 @@ class BookController extends Controller
 
             'stock' => 'nullable|integer|min:0',
 
-            'fecha_publicacion' => 'nullable|date',
+            'fecha_publicacion' => 'nullable|date|before_or_equal:today',
 
             /*
             |--------------------------------------------------------------------------
@@ -90,9 +118,9 @@ class BookController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            'archivo_completo' => 'nullable|file|max:51200',
+            'archivo_completo' => 'required|file|mimes:pdf,epub,mobi|max:51200',
 
-            'archivo_preview' => 'nullable|file|max:20480',
+            'archivo_preview' => 'required|file|mimes:pdf|max:20480',
 
             'archivos_extra.*' => 'nullable|file|max:20480',
 
@@ -102,9 +130,9 @@ class BookController extends Controller
             |--------------------------------------------------------------------------
             */
 
-            'portada' => 'nullable|image|max:5120',
+            'portada' => 'required|image|mimes:jpg,jpeg,png,webp|max:5120',
 
-            'imagenes.*' => 'nullable|image|max:5120',
+            'imagenes.*' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
 
         ]);
 
@@ -195,7 +223,7 @@ class BookController extends Controller
 
                 'estado' => 'borrador',
 
-                'visibilidad' => true,
+                'visibilidad' => false,
 
                 'destacado' => false,
 
@@ -261,6 +289,24 @@ class BookController extends Controller
                     'mime_type' => $archivo->getMimeType(),
 
                     'extension' => $archivo->getClientOriginalExtension(),
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | PORTADA
+            |--------------------------------------------------------------------------
+            */
+
+            if ($rutaPortada) {
+
+                BookImage::create([
+
+                    'book_id' => $book->id,
+
+                    'imagen' => $rutaPortada,
+
+                    'orden' => 0,
                 ]);
             }
 

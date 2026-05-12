@@ -134,17 +134,22 @@
 
 </div>
 
-@endif
 
-<div class="mx-8 mb-8 bg-base-300 p-6.5 rounded-xl flex items-center justify-between gap-10 overflow-x-auto motion-preset-slide-left">
+
+<div class="mx-8 mb-8 bg-base-300 p-6.5 rounded-xl flex items-center gap-10 overflow-x-auto motion-preset-slide-left">
+
+    <a href="{{ route('books.create') }}" class="bg-primary rounded-lg h-90 min-w-65 duration-300 relative hover:scale-105 active:scale-98 flex items-center justify-center">
+        <span class="icon-[tabler--plus] text-primary-content"></span>
+        <h1 class="font-inconsolata ml-5 text-primary-content">Subir Libro</h1>
+    </a>
 
     @foreach($libros as $libro)
 
         <div class="bg-base-200 rounded-lg h-90 min-w-65 duration-300 relative">
 
-            <button class="btn btn-sm btn-square absolute border-none top-2 right-2 z-10 bg-primary">
+            <a href="{{ route('books.show', $libro) }}" class="btn btn-sm btn-square absolute border-none top-2 right-2 z-10 bg-primary">
                 <span class="icon-[tabler--pencil] text-primary-content"></span>
-            </button>
+            </a>
 
             <div class="flex justify-center p-5">
 
@@ -204,6 +209,8 @@
         @endforeach
 
 </div>
+
+@endif
 
 
 
