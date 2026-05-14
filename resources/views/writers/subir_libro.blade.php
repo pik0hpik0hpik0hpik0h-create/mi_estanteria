@@ -243,7 +243,7 @@
                                 name="archivo_completo"
                                 class="input input-xs w-full"
                                 aria-label="Archivo principal"
-                                accept=".pdf,.epub,.mobi"
+                                accept=".pdf"
                             >
 
                             <p class="text-xs text-base-content/60">

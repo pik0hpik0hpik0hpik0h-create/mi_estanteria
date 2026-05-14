@@ -68,6 +68,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/writer/libros/subir', [BookController::class, 'store'])->name('books.store');
 
     Route::get('/libros/{book}', [BookController::class, 'show'])->name('books.show');
+    Route::put('/libros/{book}', [BookController::class, 'update'])->name('books.update');
 
 });
 

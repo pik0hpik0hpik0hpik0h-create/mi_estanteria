@@ -49,7 +49,8 @@ class BookController extends Controller
     {
         $book->load([
             'category',
-            'writer.user'
+            'writer.user',
+            'files'
         ]);
 
         $canEdit = false;
@@ -64,6 +65,224 @@ class BookController extends Controller
             'book',
             'canEdit'
         ));
+    }
+    /*
+    |--------------------------------------------------------------------------
+    | ACTUALIZAR LIBRO
+    |--------------------------------------------------------------------------
+    */
+
+    public function update(Request $request, Book $book)
+    {
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDAR PERMISOS
+        |--------------------------------------------------------------------------
+        */
+
+        if (!Auth::check() || !$book->writer) {
+
+            abort(403);
+
+        }
+
+        if (Auth::id() !== $book->writer->user_id) {
+
+            abort(403);
+
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDACIÓN
+        |--------------------------------------------------------------------------
+        */
+
+        $request->validate([
+
+            'titulo' => 'required|string|max:255',
+
+            'descripcion_corta' => 'required|string|max:500',
+
+            'descripcion' => 'required|string',
+
+            'idioma' => 'nullable|string|max:100',
+
+            'isbn' => 'nullable|string|max:100|unique:books,isbn,' . $book->id,
+
+            'paginas' => 'nullable|integer|min:1',
+
+            'precio' => 'required|numeric|min:0',
+
+            'stock' => 'nullable|integer|min:0',
+
+            'fecha_publicacion' => 'nullable|date',
+
+            /*
+            |--------------------------------------------------------------------------
+            | ARCHIVOS OPCIONALES
+            |--------------------------------------------------------------------------
+            */
+
+            'portada' => 'nullable|image|mimes:jpg,jpeg,png,webp|max:5120',
+
+            'archivo_preview' => 'nullable|file|mimes:pdf|max:20480',
+
+            'archivo_completo' => 'nullable|file|mimes:pdf,epub,mobi|max:51200',
+
+        ]);
+
+        DB::beginTransaction();
+
+        try {
+
+            /*
+            |--------------------------------------------------------------------------
+            | PORTADA
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('portada')) {
+
+                // ELIMINAR ANTERIOR
+                if ($book->portada) {
+
+                    Storage::disk('public')->delete($book->portada);
+
+                }
+
+                $rutaPortada = $request->file('portada')
+                    ->store('books/portadas', 'public');
+
+                $book->portada = $rutaPortada;
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | ACTUALIZAR LIBRO
+            |--------------------------------------------------------------------------
+            */
+
+            $book->update([
+
+                'titulo' => $request->titulo,
+
+                'descripcion_corta' => $request->descripcion_corta,
+
+                'descripcion' => $request->descripcion,
+
+                'idioma' => $request->idioma,
+
+                'isbn' => $request->isbn,
+
+                'paginas' => $request->paginas,
+
+                'precio' => $request->precio,
+
+                'stock' => $request->stock,
+
+                'fecha_publicacion' => $request->fecha_publicacion,
+            ]);
+
+            /*
+            |--------------------------------------------------------------------------
+            | PREVIEW PDF
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('archivo_preview')) {
+
+                $previewAnterior = $book->files()
+                    ->where('tipo', 'preview')
+                    ->first();
+
+                // BORRAR ARCHIVO FÍSICO
+                if ($previewAnterior) {
+
+                    Storage::disk('public')
+                        ->delete($previewAnterior->archivo);
+
+                    $previewAnterior->delete();
+                }
+
+                $archivo = $request->file('archivo_preview');
+
+                $ruta = $archivo->store('books/previews', 'public');
+
+                BookFile::create([
+
+                    'book_id' => $book->id,
+
+                    'tipo' => 'preview',
+
+                    'archivo' => $ruta,
+
+                    'nombre_original' => $archivo->getClientOriginalName(),
+
+                    'peso' => $archivo->getSize(),
+
+                    'mime_type' => $archivo->getMimeType(),
+
+                    'extension' => $archivo->getClientOriginalExtension(),
+                ]);
+            }
+
+            /*
+            |--------------------------------------------------------------------------
+            | ARCHIVO COMPLETO
+            |--------------------------------------------------------------------------
+            */
+
+            if ($request->hasFile('archivo_completo')) {
+
+                $archivoAnterior = $book->files()
+                    ->where('tipo', 'completo')
+                    ->first();
+
+                if ($archivoAnterior) {
+
+                    Storage::disk('public')
+                        ->delete($archivoAnterior->archivo);
+
+                    $archivoAnterior->delete();
+                }
+
+                $archivo = $request->file('archivo_completo');
+
+                $ruta = $archivo->store('books/files', 'public');
+
+                BookFile::create([
+
+                    'book_id' => $book->id,
+
+                    'tipo' => 'completo',
+
+                    'archivo' => $ruta,
+
+                    'nombre_original' => $archivo->getClientOriginalName(),
+
+                    'peso' => $archivo->getSize(),
+
+                    'mime_type' => $archivo->getMimeType(),
+
+                    'extension' => $archivo->getClientOriginalExtension(),
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()
+                ->route('books.show', $book)
+                ->with('success', 'Libro actualizado correctamente.');
+
+        } catch (\Exception $e) {
+
+            DB::rollBack();
+
+            return back()
+                ->withInput()
+                ->with('error', 'Error: ' . $e->getMessage());
+        }
     }
 
     /*

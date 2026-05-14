@@ -125,10 +125,16 @@ class UsuarioController extends Controller
             ->where('estado', 'pendiente')
             ->exists();
 
-        $libros = Book::with('category')
-            ->where('writer_id', $writer->id)
-            ->latest()
-            ->get();
+        $libros = collect();
+
+        if ($writer) {
+
+            $libros = Book::with('category')
+                ->where('writer_id', $writer->id)
+                ->latest()
+                ->get();
+
+        }
 
         return view('auth.perfil', compact(
             'user',
