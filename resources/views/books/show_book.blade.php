@@ -47,6 +47,21 @@
 
 </div>
 
+@php
+    $archivo_preview = $book->files->where('tipo', 'preview')->first();
+@endphp
+
+@if($archivo_preview)
+
+<div class="w-full flex justify-center">
+
+        <x-flipbook-preview
+            :pdf="asset('storage/' . $archivo_preview->archivo)"
+        />
+</div>
+
+@endif
+
 @if($canEdit)
 <form 
             method="POST"

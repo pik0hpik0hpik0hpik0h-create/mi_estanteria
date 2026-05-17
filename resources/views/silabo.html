@@ -1,0 +1,866 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catálogo Digital - CREINTI</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/turn.js/3/turn.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #F2F4F7;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px;
+            overflow-x: hidden;
+        }
+
+        .header {
+            text-align: center;
+            color: #1e3c72;
+            margin-bottom: 15px;
+            animation: fadeInDown 0.8s ease-out;
+            width: 100%;
+        }
+
+        .header h1 {
+            font-size: clamp(1.5em, 4vw, 2.5em);
+            margin-bottom: 8px;
+            text-shadow: 0 2px 4px rgba(30, 60, 114, 0.1);
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: clamp(0.9em, 2vw, 1.2em);
+            opacity: 0.8;
+            color: #4a5568;
+        }
+
+        /* Loading */
+        .loading {
+            display: block;
+            text-align: center;
+            color: #1e3c72;
+            font-size: 1.2em;
+            margin: 20px 0;
+        }
+
+        .loading.hide {
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(30, 60, 114, 0.2);
+            border-top: 4px solid #1e3c72;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            width: 300px;
+            height: 25px;
+            background: rgba(30, 60, 114, 0.15);
+            border-radius: 15px;
+            margin: 20px auto;
+            overflow: hidden;
+            display: none;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .progress-container.show {
+            display: block;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #1e3c72, #2a5298);
+            border-radius: 15px;
+            text-align: center;
+            line-height: 25px;
+            color: white;
+            font-weight: bold;
+            font-size: 0.9em;
+            width: 0%;
+            transition: width 0.3s;
+            box-shadow: 0 2px 4px rgba(30, 60, 114, 0.3);
+        }
+
+        /* Catalog Container */
+        .catalog-container {
+            position: relative;
+            width: 100%;
+            max-width: 1200px;
+            height: auto;
+            margin: 0 auto;
+            perspective: 2000px;
+            display: none;
+            padding: 0;
+            max-height: calc(100vh - 200px);
+            border: 8px solid #1a1a1a;
+            border-radius: 8px;
+            background: #1a1a1a;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .catalog-container.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #flipbook {
+            width: 100%;
+            height: 100%;
+            margin: 0 auto;
+        }
+
+        .page {
+            background: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: none;
+        }
+
+        .page canvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            display: block;
+        }
+
+        /* Controls */
+        .controls {
+            display: none;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+            animation: fadeInUp 0.8s ease-out;
+            flex-wrap: wrap;
+            padding: 0 10px;
+        }
+
+        .controls.show {
+            display: flex;
+        }
+
+        .control-btn {
+            background: white;
+            color: #1e3c72;
+            border: 2px solid #e2e8f0;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: clamp(0.85em, 2vw, 1em);
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            white-space: nowrap;
+        }
+
+        .control-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.25);
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        .control-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            background: #f8f9fa;
+            color: #94a3b8;
+        }
+
+        .control-btn.download {
+            background: #1e3c72;
+            color: white;
+            border: 2px solid #1e3c72;
+        }
+
+        .control-btn.download:hover {
+            background: #152847;
+            border-color: #152847;
+            transform: translateY(-2px) scale(1.02);
+        }
+
+        .page-counter {
+            text-align: center;
+            color: #1e3c72;
+            margin-top: 15px;
+            font-size: clamp(0.9em, 2vw, 1.1em);
+            display: none;
+            font-weight: 600;
+        }
+
+        .page-counter.show {
+            display: block;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            top: 80px;
+            right: 10px;
+            display: none;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 1000;
+        }
+
+        .zoom-controls.show {
+            display: flex;
+        }
+
+        .zoom-btn {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e3c72;
+            font-size: 1.3em;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .zoom-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        /* Fullscreen Button */
+        .fullscreen-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e2e8f0;
+            color: #1e3c72;
+            font-size: 1.3em;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            display: none;
+            z-index: 1000;
+        }
+
+        .fullscreen-btn.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .fullscreen-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.3);
+            background: #1e3c72;
+            color: white;
+            border-color: #1e3c72;
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Media Queries - Responsive Design */
+
+        /* Tablets grandes y desktop pequeño */
+        @media (max-width: 1024px) {
+            .catalog-container {
+                max-width: 95%;
+                max-height: calc(100vh - 200px);
+                border-width: 6px;
+            }
+
+            .header {
+                margin-bottom: 10px;
+            }
+
+            .controls {
+                margin-top: 10px;
+            }
+        }
+
+        /* Tablets */
+        @media (max-width: 768px) {
+            body {
+                padding: 8px 5px;
+            }
+
+            .header {
+                margin-bottom: 8px;
+            }
+
+            .header h1 {
+                font-size: 1.4em;
+            }
+
+            .header p {
+                font-size: 0.9em;
+            }
+
+            .catalog-container {
+                max-width: 100%;
+                height: auto;
+                padding: 0;
+                max-height: calc(100vh - 170px);
+                border-width: 5px;
+                border-radius: 6px;
+            }
+
+            .controls {
+                gap: 8px;
+                margin-top: 10px;
+            }
+
+            .control-btn {
+                padding: 10px 15px;
+                font-size: 0.85em;
+            }
+
+            .zoom-controls {
+                top: 60px;
+                right: 5px;
+                gap: 5px;
+            }
+
+            .zoom-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 1.1em;
+            }
+
+            .fullscreen-btn {
+                top: 5px;
+                right: 5px;
+                width: 40px;
+                height: 40px;
+                font-size: 1.1em;
+            }
+
+            /* Ocultar algunos botones en móvil para ahorrar espacio */
+            .control-btn:nth-child(1),
+            .control-btn:nth-child(4) {
+                display: none;
+            }
+        }
+
+        /* Móviles */
+        @media (max-width: 480px) {
+            body {
+                padding: 5px 3px;
+            }
+
+            .header {
+                margin-bottom: 6px;
+            }
+
+            .header h1 {
+                font-size: 1.25em;
+                margin-bottom: 4px;
+            }
+
+            .header p {
+                font-size: 0.82em;
+            }
+
+            .catalog-container {
+                padding: 0;
+                max-height: calc(100vh - 150px);
+                border-width: 4px;
+                border-radius: 5px;
+                margin-bottom: 5px;
+            }
+
+            .control-btn {
+                padding: 8px 12px;
+                font-size: 0.8em;
+            }
+
+            .controls {
+                margin-top: 8px;
+                gap: 6px;
+            }
+
+            .zoom-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+            }
+
+            .fullscreen-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1em;
+            }
+
+            .page-counter {
+                font-size: 0.85em;
+                margin-top: 6px;
+            }
+        }
+
+        /* Landscape mode para móviles */
+        @media (max-width: 768px) and (orientation: landscape) {
+            body {
+                padding: 3px;
+            }
+
+            .header {
+                margin-bottom: 4px;
+            }
+
+            .header h1 {
+                font-size: 1.1em;
+                margin-bottom: 2px;
+            }
+
+            .header p {
+                font-size: 0.75em;
+            }
+
+            .controls {
+                margin-top: 6px;
+                gap: 4px;
+            }
+
+            .zoom-controls {
+                top: 45px;
+            }
+
+            .catalog-container {
+                max-height: calc(100vh - 120px);
+                border-width: 3px;
+            }
+        }
+
+        /* Tablets en landscape */
+        @media (min-width: 768px) and (max-width: 1024px) and (orientation: landscape) {
+            .catalog-container {
+                max-width: 90%;
+                max-height: calc(100vh - 150px);
+                border-width: 5px;
+            }
+
+            .header h1 {
+                font-size: 1.6em;
+            }
+
+            .header {
+                margin-bottom: 8px;
+            }
+
+            .controls {
+                margin-top: 8px;
+            }
+        }
+
+        /* Pantallas muy grandes */
+        @media (min-width: 1400px) {
+            .catalog-container {
+                max-width: 1250px;
+                max-height: calc(100vh - 220px);
+                border-width: 8px;
+            }
+        }
+
+        /* Ajuste para pantallas de altura reducida */
+        @media (max-height: 700px) {
+            .catalog-container {
+                max-height: calc(100vh - 160px);
+            }
+
+            .header {
+                margin-bottom: 6px;
+            }
+
+            .controls {
+                margin-top: 8px;
+            }
+        }
+
+        /* Móviles con altura muy reducida */
+        @media (max-width: 480px) and (max-height: 700px) {
+            .catalog-container {
+                max-height: calc(100vh - 135px);
+            }
+
+            .header h1 {
+                font-size: 1.1em;
+            }
+
+            .header p {
+                font-size: 0.75em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <h1>Inteligencia Artificial Aplicada al Trabajo, los Negocios y la Educación</h1>
+        <p>Silabo</p>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p id="loading-status">Cargando catálogo...</p>
+        <div class="progress-container" id="progress-container">
+            <div class="progress-bar" id="progress-bar">0%</div>
+        </div>
+    </div>
+
+    <!-- Fullscreen Button -->
+    <button class="fullscreen-btn" id="fullscreen-btn" title="Pantalla completa">
+        🖥️
+    </button>
+
+    <!-- Catalog Container -->
+    <div class="catalog-container" id="catalog-container">
+        <div id="flipbook"></div>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls" id="zoom-controls">
+        <button class="zoom-btn" id="zoom-in" title="Acercar">+</button>
+        <button class="zoom-btn" id="zoom-out" title="Alejar">−</button>
+        <button class="zoom-btn" id="zoom-reset" title="Restablecer">⟲</button>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls" id="controls">
+        <button class="control-btn" id="first-btn">⏮️ Primera</button>
+        <button class="control-btn" id="prev-btn">⬅️ Anterior</button>
+        <button class="control-btn" id="next-btn">Siguiente ➡️</button>
+        <button class="control-btn" id="last-btn">Última ⏭️</button>
+        <a href="https://www.creinti.com/documentos/Silabo.pdf"
+           download
+           class="control-btn download">💾 Descargar PDF</a>
+    </div>
+
+    <div class="page-counter" id="page-counter">
+        <span id="current-page">1</span> / <span id="total-pages">0</span>
+    </div>
+
+    <script>
+        // Configurar PDF.js
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+        // URL del PDF a cargar automáticamente
+        const PDF_URL = './documentos/Silabo.pdf';
+
+        let pdfDoc = null;
+        let zoomLevel = 1;
+        let isMobile = window.innerWidth < 768;
+
+        // Cargar PDF automáticamente al iniciar
+        window.addEventListener('DOMContentLoaded', () => {
+            loadPdfFromUrl();
+        });
+
+        // Detectar cambios de orientación y tamaño
+        window.addEventListener('resize', () => {
+            isMobile = window.innerWidth < 768;
+            resizeFlipbook();
+        });
+
+        // Cargar PDF desde URL
+        async function loadPdfFromUrl() {
+            try {
+                document.getElementById('loading-status').textContent = 'Cargando PDF...';
+
+                const loadingTask = pdfjsLib.getDocument(PDF_URL);
+                pdfDoc = await loadingTask.promise;
+
+                document.getElementById('loading-status').textContent = `Procesando ${pdfDoc.numPages} páginas...`;
+
+                await renderFlipbook();
+
+                // Hide loading, show flipbook
+                document.getElementById('loading').classList.add('hide');
+                document.getElementById('catalog-container').classList.add('show');
+                document.getElementById('controls').classList.add('show');
+                document.getElementById('page-counter').classList.add('show');
+                document.getElementById('zoom-controls').classList.add('show');
+                document.getElementById('fullscreen-btn').classList.add('show');
+
+            } catch (error) {
+                console.error('Error cargando PDF:', error);
+                document.getElementById('loading-status').innerHTML =
+                    '❌ Error al cargar el catálogo<br><small style="font-size:0.9em;margin-top:10px;display:block;">Verifica la conexión o contacta al administrador</small>';
+            }
+        }
+
+        // Render Flipbook
+        async function renderFlipbook() {
+            const flipbook = document.getElementById('flipbook');
+            flipbook.innerHTML = '';
+
+            const progressBar = document.getElementById('progress-bar');
+            const progressContainer = document.getElementById('progress-container');
+            progressContainer.classList.add('show');
+
+            // Renderizar cada página
+            for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+                const page = await pdfDoc.getPage(pageNum);
+                const viewport = page.getViewport({ scale: 2 });
+
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({ canvasContext: context, viewport: viewport }).promise;
+
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page';
+                pageDiv.appendChild(canvas);
+                flipbook.appendChild(pageDiv);
+
+                // Update progress
+                const progress = Math.round((pageNum / pdfDoc.numPages) * 100);
+                progressBar.style.width = progress + '%';
+                progressBar.textContent = progress + '%';
+            }
+
+            progressContainer.classList.remove('show');
+
+            // Initialize Turn.js with responsive settings
+            setTimeout(() => {
+                initializeFlipbook();
+            }, 100);
+        }
+
+        // Initialize Flipbook with responsive settings
+        function initializeFlipbook() {
+            const windowWidth = $(window).width();
+            const windowHeight = $(window).height();
+            let flipbookWidth, flipbookHeight, displayMode;
+
+            // Calcular espacio disponible según el tipo de dispositivo
+            let availableHeight;
+
+            if (windowWidth < 480) {
+                // Móvil pequeño - maximizar espacio vertical
+                availableHeight = windowHeight - 145; // Reducir margen para usar más espacio
+            } else if (windowWidth < 768) {
+                // Tablet pequeña
+                availableHeight = windowHeight - 165;
+            } else {
+                // Desktop
+                availableHeight = windowHeight - 195;
+            }
+
+            if (windowWidth < 480) {
+                // Móvil pequeño - una página a la vez, maximizar altura
+                flipbookWidth = Math.min(windowWidth - 6, 450);
+                flipbookHeight = Math.min(Math.round(flipbookWidth * 1.5), availableHeight);
+                displayMode = 'single';
+            } else if (windowWidth < 768) {
+                // Tablet pequeña - una página a la vez
+                flipbookWidth = Math.min(windowWidth - 10, 550);
+                flipbookHeight = Math.min(Math.round(flipbookWidth * 1.42), availableHeight);
+                displayMode = 'single';
+            } else if (windowWidth < 1024) {
+                // Tablet/Desktop pequeño - dos páginas
+                flipbookWidth = Math.min(windowWidth - 40, 850);
+                flipbookHeight = Math.min(Math.round(flipbookWidth * 0.58), availableHeight);
+                displayMode = 'double';
+            } else if (windowWidth < 1400) {
+                // Desktop mediano - dos páginas
+                flipbookWidth = Math.min(windowWidth - 60, 1000);
+                flipbookHeight = Math.min(Math.round(flipbookWidth * 0.58), availableHeight);
+                displayMode = 'double';
+            } else {
+                // Desktop grande - dos páginas
+                flipbookWidth = Math.min(1150, windowWidth - 80);
+                flipbookHeight = Math.min(Math.round(flipbookWidth * 0.58), availableHeight);
+                displayMode = 'double';
+            }
+
+            // Asegurar dimensiones mínimas razonables
+            flipbookHeight = Math.max(flipbookHeight, 350);
+
+            $('#flipbook').turn({
+                width: flipbookWidth,
+                height: flipbookHeight,
+                autoCenter: true,
+                acceleration: true,
+                gradients: !isMobile,
+                elevation: isMobile ? 0 : 50,
+                duration: isMobile ? 600 : 1000,
+                display: displayMode
+            });
+
+            updatePageCounter();
+            setupControls();
+        }
+
+        // Setup Controls
+        function setupControls() {
+            // Navegación
+            $('#first-btn').click(() => $('#flipbook').turn('page', 1));
+            $('#prev-btn').click(() => $('#flipbook').turn('previous'));
+            $('#next-btn').click(() => $('#flipbook').turn('next'));
+            $('#last-btn').click(() => $('#flipbook').turn('page', $('#flipbook').turn('pages')));
+
+            // Zoom
+            $('#zoom-in').click(() => adjustZoom(0.1));
+            $('#zoom-out').click(() => adjustZoom(-0.1));
+            $('#zoom-reset').click(() => resetZoom());
+
+            // Fullscreen
+            $('#fullscreen-btn').click(toggleFullscreen);
+
+            // Page change event
+            $('#flipbook').bind('turned', function(event, page) {
+                updatePageCounter();
+            });
+
+            // Keyboard navigation
+            $(document).keydown(function(e) {
+                if (e.keyCode === 37) { // Left arrow
+                    $('#flipbook').turn('previous');
+                } else if (e.keyCode === 39) { // Right arrow
+                    $('#flipbook').turn('next');
+                } else if (e.keyCode === 36) { // Home
+                    $('#flipbook').turn('page', 1);
+                } else if (e.keyCode === 35) { // End
+                    $('#flipbook').turn('page', $('#flipbook').turn('pages'));
+                } else if (e.keyCode === 70) { // F
+                    toggleFullscreen();
+                }
+            });
+
+            // Touch swipe support for mobile
+            if (isMobile) {
+                let touchStartX = 0;
+                let touchEndX = 0;
+
+                $('#flipbook').on('touchstart', function(e) {
+                    touchStartX = e.changedTouches[0].screenX;
+                });
+
+                $('#flipbook').on('touchend', function(e) {
+                    touchEndX = e.changedTouches[0].screenX;
+                    handleSwipe();
+                });
+
+                function handleSwipe() {
+                    if (touchEndX < touchStartX - 50) {
+                        $('#flipbook').turn('next');
+                    }
+                    if (touchEndX > touchStartX + 50) {
+                        $('#flipbook').turn('previous');
+                    }
+                }
+            }
+        }
+
+        // Update Page Counter
+        function updatePageCounter() {
+            const currentPage = $('#flipbook').turn('page');
+            const totalPages = $('#flipbook').turn('pages');
+
+            $('#current-page').text(currentPage);
+            $('#total-pages').text(totalPages);
+
+            // Disable buttons at extremes
+            $('#first-btn').prop('disabled', currentPage === 1);
+            $('#prev-btn').prop('disabled', currentPage === 1);
+            $('#next-btn').prop('disabled', currentPage === totalPages);
+            $('#last-btn').prop('disabled', currentPage === totalPages);
+        }
+
+        // Zoom functions
+        function adjustZoom(delta) {
+            zoomLevel += delta;
+            zoomLevel = Math.max(0.5, Math.min(2, zoomLevel));
+            applyZoom();
+        }
+
+        function resetZoom() {
+            zoomLevel = 1;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const container = document.querySelector('.catalog-container');
+            container.style.transform = `scale(${zoomLevel})`;
+        }
+
+        // Fullscreen
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+                document.getElementById('fullscreen-btn').textContent = '🗙';
+            } else {
+                document.exitFullscreen();
+                document.getElementById('fullscreen-btn').textContent = '🖥️';
+            }
+        }
+
+        // Responsive resize
+        function resizeFlipbook() {
+            if ($('#flipbook').data('turn')) {
+                $('#flipbook').turn('destroy');
+                initializeFlipbook();
+            }
+        }
+    </script>
+</body>
+</html>
