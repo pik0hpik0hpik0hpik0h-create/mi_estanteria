@@ -59,4 +59,9 @@ class Writer extends Model
     {
         return $this->hasMany(\App\Models\WriterPayout::class, 'writer_id');
     }
+
+    public function orderItems()
+{
+    return $this->hasMany(OrderItem::class);
+}
 }

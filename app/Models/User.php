@@ -73,4 +73,19 @@ class User extends Authenticatable implements MustVerifyEmail
             ->exists();
     }
 
+    public function orders()
+{
+    return $this->hasMany(Order::class);
+}
+
+public function payments()
+{
+    return $this->hasMany(Payment::class);
+}
+
+public function books()
+{
+    return $this->hasMany(UserBook::class);
+}
+
 }
