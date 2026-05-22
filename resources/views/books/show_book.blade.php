@@ -35,8 +35,37 @@
 
         </div>
 
-        <div class="text-primary font-bold font-serif text-3xl">
-            ${{ $book->precio }}
+        <div class="flex items-center gap-3">
+
+            <div class="text-primary font-bold font-serif text-3xl">
+                ${{ $book->precio }}
+            </div>
+
+            {{-- BOTÓN CARRITO --}}
+            @if(!$canEdit)
+
+            <form 
+            action="{{ route('cart.add', $book) }}"
+            method="POST"
+            >
+
+            @csrf
+
+            <button 
+            type="submit"
+            class="btn btn-primary rounded-2xl"
+            >
+
+            <span class="icon-[tabler--shopping-cart-plus] text-xl"></span>
+
+            Añadir
+
+            </button>
+
+            </form>
+
+        @endif
+
         </div>
 
     </div>

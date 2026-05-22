@@ -61,7 +61,7 @@
                     </a>
                     @endauth
 
-                    <button class="btn md:hidden font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
+                    <a href="{{ route('cart.index') }}" class="btn md:hidden font-light"><span class="icon-[tabler--shopping-cart] size-5"></span></a>
 
                     <li><a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}">Inicio</a></li>
 
@@ -86,7 +86,7 @@
 
             <div class="items-center justify-between w-auto hidden md:flex gap-3">
 
-                <button class="btn bg-none font-light" href="#"><span class="icon-[tabler--shopping-cart] size-5"></span></button>
+                <a href="{{ route('cart.index') }}" class="btn bg-none font-light"><span class="icon-[tabler--shopping-cart] size-5"></span></a>
 
                 @auth
                 <a href="{{ route('perfil') }}">

@@ -597,4 +597,5 @@ class BookController extends Controller
                 ->with('error', 'Error: ' . $e->getMessage());
         }
     }
+
 }

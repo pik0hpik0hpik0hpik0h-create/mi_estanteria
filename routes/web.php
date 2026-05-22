@@ -6,6 +6,8 @@ use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\WriterController;
 use App\Http\Controllers\WriterWithdrawController;
 use App\Http\Controllers\BookController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\PaypalController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -69,6 +71,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/libros/{book}', [BookController::class, 'show'])->name('books.show');
     Route::put('/libros/{book}', [BookController::class, 'update'])->name('books.update');
+
+    Route::get('/carrito', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/carrito/agregar/{book}', [CartController::class, 'add'])->name('cart.add');
+    Route::delete('/carrito/eliminar/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
+    Route::delete('/carrito/limpiar', [CartController::class, 'clear'])->name('cart.clear');
+
+    Route::post('/checkout/paypal', [PaypalController::class, 'checkout'])->name('paypal.checkout');
+    Route::get('/checkout/paypal/success', [PaypalController::class, 'success'])->name('paypal.success');
+    Route::get('/checkout/paypal/cancel', [PaypalController::class, 'cancel'])->name('paypal.cancel');
 
 });
 
