@@ -440,7 +440,7 @@ class BookController extends Controller
 
                 'stock' => $request->stock,
 
-                'estado' => 'borrador',
+                'estado' => 'revision',
 
                 'visibilidad' => false,
 

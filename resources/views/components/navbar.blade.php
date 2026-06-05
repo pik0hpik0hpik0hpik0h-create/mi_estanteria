@@ -47,7 +47,7 @@
                             Perfil
                         </a>
 
-                        <form method="POST" class="w-1/2"action="{{ route('logout') }}">
+                        <form method="POST" class="w-1/2" action="{{ route('logout') }}">
                             @csrf
                             <button class="btn btn-primary w-full md:hidden text-sm md:text-lg" type="submit">
                                 <span class="icon-[tabler--logout-2] size-5"></span>
@@ -64,6 +64,18 @@
                     <a href="{{ route('cart.index') }}" class="btn md:hidden font-light"><span class="icon-[tabler--shopping-cart] size-5"></span></a>
 
                     <li><a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}">Inicio</a></li>
+
+                    {{-- INICIO: PESTAÑA ADMIN --}}
+                    @auth
+                        @if(Auth::user()->is_admin)
+                            <li>
+                                <a class="hover:text-primary text-sm md:text-lg text-warning font-bold" href="{{ route('admin.books.index') }}">
+                                    Panel Admin
+                                </a>
+                            </li>
+                        @endif
+                    @endauth
+                    {{-- FIN: PESTAÑA ADMIN --}}
 
                     <li class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]">
                         <button type="button" class="hover:text-primary text-sm md:text-lg dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content">

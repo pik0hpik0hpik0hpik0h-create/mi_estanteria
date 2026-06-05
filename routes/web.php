@@ -8,6 +8,7 @@ use App\Http\Controllers\WriterWithdrawController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaypalController;
+use App\Http\Controllers\AdminBookController; // <-- AQUÍ IMPORTAMOS EL NUEVO CONTROLADOR
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -81,9 +82,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/checkout/paypal/success', [PaypalController::class, 'success'])->name('paypal.success');
     Route::get('/checkout/paypal/cancel', [PaypalController::class, 'cancel'])->name('paypal.cancel');
 
+    // --- RUTAS DEL PANEL ADMIN ---
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/libros-pendientes', [AdminBookController::class, 'index'])->name('books.index');
+        Route::get('/libros-pendientes/{book}', [AdminBookController::class, 'show'])->name('books.show');
+        Route::post('/libros-pendientes/{book}/autorizar', [AdminBookController::class, 'approve'])->name('books.approve');
+        Route::post('/libros-pendientes/{book}/rechazar', [AdminBookController::class, 'reject'])->name('books.reject');
+    });
+
 });
-
-
-
-
-
