@@ -6,7 +6,11 @@
 <div class="mt-15 md:mt-25"></div>
 
 <div class="p-8 motion-preset-focus max-w-7xl mx-auto">
-    <h1 class="text-4xl font-serif mb-6">Autorización de Libros</h1>
+    <h1 class="text-4xl font-serif mb-6">Panel Admin</h1>
+
+    @include('admin.tabs', ['activeTab' => 'books'])
+
+    <h2 class="text-2xl font-serif mb-4">Autorización de Libros</h2>
 
     @if(session('success'))
         <div class="alert alert-success mb-6 shadow-sm">

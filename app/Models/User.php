@@ -24,7 +24,12 @@ class User extends Authenticatable implements MustVerifyEmail
         'password',
         'google_id',
         'avatar',
-        'email_verified_at'
+        'email_verified_at',
+        'is_admin',
+    ];
+
+    protected $attributes = [
+        'is_admin' => false,
     ];
 
     /**

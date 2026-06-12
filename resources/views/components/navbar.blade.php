@@ -69,7 +69,7 @@
                     @auth
                         @if(Auth::user()->is_admin)
                             <li>
-                                <a class="hover:text-primary text-sm md:text-lg text-warning font-bold" href="{{ route('admin.books.index') }}">
+                                <a class="hover:text-primary text-sm md:text-lg font-bold" href="{{ route('admin.books.index') }}">
                                     Panel Admin
                                 </a>
                             </li>

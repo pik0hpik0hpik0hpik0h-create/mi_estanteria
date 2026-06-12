@@ -98,14 +98,15 @@ class WriterController extends Controller
                 ]
             );
 
-            
+            // El rol queda INACTIVO (estado=0) hasta que un administrador
+            // apruebe manualmente la solicitud desde el Panel Admin.
             Rol::updateOrCreate(
                 [
                     'user_id' => $user->id,
                     'rol' => 'escritor'
                 ],
                 [
-                    'estado' => 1,
+                    'estado' => 0,
                     'fecha_asignacion' => now()
                 ]
             );

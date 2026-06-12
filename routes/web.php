@@ -9,6 +9,7 @@ use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\AdminBookController; // <-- AQUÍ IMPORTAMOS EL NUEVO CONTROLADOR
+use App\Http\Controllers\AdminWriterController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -88,6 +89,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/libros-pendientes/{book}', [AdminBookController::class, 'show'])->name('books.show');
         Route::post('/libros-pendientes/{book}/autorizar', [AdminBookController::class, 'approve'])->name('books.approve');
         Route::post('/libros-pendientes/{book}/rechazar', [AdminBookController::class, 'reject'])->name('books.reject');
+
+        // Autorización de escritores (verificación manual)
+        Route::get('/escritores-pendientes', [AdminWriterController::class, 'index'])->name('writers.index');
+        Route::get('/escritores-pendientes/{writer}', [AdminWriterController::class, 'show'])->name('writers.show');
+        Route::post('/escritores-pendientes/{writer}/autorizar', [AdminWriterController::class, 'approve'])->name('writers.approve');
+        Route::post('/escritores-pendientes/{writer}/rechazar', [AdminWriterController::class, 'reject'])->name('writers.reject');
     });
 
 });
