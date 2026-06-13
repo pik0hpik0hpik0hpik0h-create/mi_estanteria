@@ -315,25 +315,30 @@
             {{-- PAYPAL --}}
             <div class="mt-8">
 
-                <form 
-                    action="{{ route('paypal.checkout') }}"
+                    <form
+                    action="{{ route('paypal.create') }}"
                     method="POST"
-                >
+                    >
 
                     @csrf
 
-                    <button 
-                        type="submit"
-                        class="btn btn-accent w-full h-16 rounded-md text-lg"
+                    <input
+                    type="hidden"
+                    name="book_id"
+                    value="{{ $book->id }}"
                     >
 
-                        <span class="icon-[tabler--brand-paypal] text-2xl"></span>
+                    <button
+                    type="submit"
+                    class="btn btn-accent"
+                    >
 
-                        Pagar con PayPal
+                    Pagar con PayPal
 
                     </button>
 
-                </form>
+                    </form>
+
 
             </div>
 

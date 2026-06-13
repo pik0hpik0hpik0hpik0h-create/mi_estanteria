@@ -8,7 +8,7 @@ use App\Http\Controllers\WriterWithdrawController;
 use App\Http\Controllers\BookController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaypalController;
-use App\Http\Controllers\AdminBookController; // <-- AQUÍ IMPORTAMOS EL NUEVO CONTROLADOR
+use App\Http\Controllers\AdminBookController;
 use App\Http\Controllers\AdminWriterController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -82,6 +82,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/checkout/paypal', [PaypalController::class, 'checkout'])->name('paypal.checkout');
     Route::get('/checkout/paypal/success', [PaypalController::class, 'success'])->name('paypal.success');
     Route::get('/checkout/paypal/cancel', [PaypalController::class, 'cancel'])->name('paypal.cancel');
+
+    Route::post('/paypal/create', [PaypalController::class, 'create'])->name('paypal.create');
+    Route::get('/paypal/success', [PaypalController::class, 'success'])->name('paypal.success');
+    Route::get('/paypal/cancel', [PaypalController::class, 'cancel'])->name('paypal.cancel');
 
     // --- RUTAS DEL PANEL ADMIN ---
     Route::prefix('admin')->name('admin.')->group(function () {
