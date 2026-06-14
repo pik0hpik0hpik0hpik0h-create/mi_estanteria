@@ -32,6 +32,17 @@ class BookController extends Controller
                 ->with('error', 'Debes registrarte como escritor.');
         }
 
+        // VALIDAR QUE EL ESCRITOR ESTÉ APROBADO
+        if ($user->writer->estado !== 'aprobado') {
+            $msg = match($user->writer->estado) {
+                'pendiente'  => 'Tu solicitud de escritor está pendiente de revisión. Aún no puedes publicar libros.',
+                'rechazado'  => 'Tu solicitud de escritor fue rechazada. No puedes publicar libros.',
+                'suspendido' => 'Tu cuenta de escritor está suspendida. No puedes publicar libros.',
+                default      => 'Tu cuenta de escritor todavía no está aprobada.',
+            };
+            return redirect()->route('perfil')->with('error', $msg);
+        }
+
         // CATEGORÍAS ACTIVAS
         $categories = BookCategory::where('activo', true)
             ->orderBy('nombre')
@@ -363,6 +374,13 @@ class BookController extends Controller
             return back()
                 ->withInput()
                 ->with('error', 'No tienes permisos de escritor.');
+        }
+
+        // VALIDAR QUE EL ESCRITOR ESTÉ APROBADO
+        if ($user->writer->estado !== 'aprobado') {
+            return redirect()
+                ->route('perfil')
+                ->with('error', 'Tu cuenta de escritor no está aprobada. No puedes publicar libros aún.');
         }
 
         DB::beginTransaction();

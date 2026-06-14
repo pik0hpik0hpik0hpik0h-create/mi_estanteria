@@ -10,6 +10,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\AdminBookController;
 use App\Http\Controllers\AdminWriterController;
+use App\Http\Controllers\VendedorController;
+use App\Http\Controllers\AdminVendedorController;
+use App\Http\Controllers\PaisController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -34,6 +37,9 @@ Route::post('/register', [UsuarioController::class, 'store'])->name('register.st
 
 Route::get('/auth/google', [GoogleController::class, 'redirect']);
 Route::get('/auth/google/callback', [GoogleController::class, 'callback']);
+
+// Lista de paises cacheada (la usa el select de pais del registro y del perfil)
+Route::get('/paises', [PaisController::class, 'index'])->name('paises');
 
 // RUTAS PARA USUARIO AUTENTICADOS PERO NO VERIFICADOS
 Route::middleware(['auth','not.verified'])->group(function () {
@@ -64,6 +70,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/perfil/escritor', [WriterController::class, 'create'])->name('writers_create');
     Route::post('/perfil/escritor', [WriterController::class, 'store'])->name('writers_store');
+
+    Route::get('/perfil/vendedor', [VendedorController::class, 'create'])->name('vendedores_create');
+    Route::post('/perfil/vendedor', [VendedorController::class, 'store'])->name('vendedores_store');
 
     Route::post('/writer/withdraw', [WriterWithdrawController::class, 'store'])->name('writer.withdraw.store');
     Route::get('/writer/withdraw/history', [WriterWithdrawController::class, 'historial_solicitudes_retiro'])->name('writer.withdraw_history');
@@ -99,6 +108,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/escritores-pendientes/{writer}', [AdminWriterController::class, 'show'])->name('writers.show');
         Route::post('/escritores-pendientes/{writer}/autorizar', [AdminWriterController::class, 'approve'])->name('writers.approve');
         Route::post('/escritores-pendientes/{writer}/rechazar', [AdminWriterController::class, 'reject'])->name('writers.reject');
+
+        // Autorización de vendedores
+        Route::get('/vendedores-pendientes', [AdminVendedorController::class, 'index'])->name('vendedores.index');
+        Route::get('/vendedores-pendientes/{vendedor}', [AdminVendedorController::class, 'show'])->name('vendedores.show');
+        Route::post('/vendedores-pendientes/{vendedor}/autorizar', [AdminVendedorController::class, 'approve'])->name('vendedores.approve');
+        Route::post('/vendedores-pendientes/{vendedor}/rechazar', [AdminVendedorController::class, 'reject'])->name('vendedores.reject');
     });
 
 });

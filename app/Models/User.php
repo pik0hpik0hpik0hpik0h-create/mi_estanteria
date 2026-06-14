@@ -70,10 +70,23 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasOne(\App\Models\Writer::class);
     }
 
+    public function vendedor()
+    {
+        return $this->hasOne(\App\Models\Vendedor::class);
+    }
+
     public function isWriter()
     {
         return $this->roles()
             ->where('rol', 'escritor')
+            ->where('estado', 1)
+            ->exists();
+    }
+
+    public function isVendedor()
+    {
+        return $this->roles()
+            ->where('rol', 'vendedor')
             ->where('estado', 1)
             ->exists();
     }

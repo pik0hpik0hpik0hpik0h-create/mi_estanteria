@@ -241,7 +241,7 @@
 
             const select = document.getElementById("pais");
 
-            fetch("https://restcountries.com/v3.1/all?fields=name,cca2")
+            fetch("{{ route('paises') }}")
                 .then(res => res.json())
                 .then(data => {
 

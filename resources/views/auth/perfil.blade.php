@@ -25,8 +25,8 @@
             <div class="size-16 rounded-full border-4 border-primary">
                 <img src="
                         @if(Auth::user()->avatar)
-                            {{ str_contains(Auth::user()->avatar, 'http') 
-                                ? Auth::user()->avatar 
+                            {{ str_contains(Auth::user()->avatar, 'http')
+                                ? Auth::user()->avatar
                                 : asset('storage/' . Auth::user()->avatar) }}
                         @else
                             {{ asset('assets/img/default_avatar.jpg') }}
@@ -40,6 +40,69 @@
     </div>
 
 </div>
+
+{{-- AVISO: solicitud de escritor pendiente / rechazada (no aprobada) --}}
+@if(auth()->check() && auth()->user()->writer && !auth()->user()->isWriter())
+    @php $writerEstado = auth()->user()->writer->estado; @endphp
+    <div class="px-4 sm:px-8 mb-6 motion-preset-slide-up">
+        @if($writerEstado === 'pendiente')
+            <div class="alert bg-warning/15 border border-warning text-warning-content font-inconsolata flex items-start gap-3 rounded-lg p-4">
+                <span class="icon-[tabler--clock] text-xl shrink-0 mt-0.5"></span>
+                <div class="text-sm md:text-base">
+                    <strong>Tu solicitud de escritor está en revisión.</strong><br>
+                    Un administrador la revisará pronto. Mientras tanto no podrás publicar libros.
+                </div>
+            </div>
+        @elseif($writerEstado === 'rechazado')
+            <div class="alert bg-error/15 border border-error text-error-content font-inconsolata flex items-start gap-3 rounded-lg p-4">
+                <span class="icon-[tabler--x] text-xl shrink-0 mt-0.5"></span>
+                <div class="text-sm md:text-base">
+                    <strong>Tu solicitud de escritor fue rechazada.</strong><br>
+                    No puedes publicar libros en este momento.
+                </div>
+            </div>
+        @elseif($writerEstado === 'suspendido')
+            <div class="alert bg-warning/15 border border-warning text-warning-content font-inconsolata flex items-start gap-3 rounded-lg p-4">
+                <span class="icon-[tabler--alert-triangle] text-xl shrink-0 mt-0.5"></span>
+                <div class="text-sm md:text-base">
+                    <strong>Tu cuenta de escritor está suspendida.</strong><br>
+                    Contactá al equipo de soporte para más información.
+                </div>
+            </div>
+        @endif
+    </div>
+@endif
+
+{{-- AVISO: solicitud de vendedor pendiente / rechazada (no aprobada) --}}
+@if(auth()->check() && auth()->user()->vendedor && !auth()->user()->isVendedor())
+    @php $vendedorEstado = auth()->user()->vendedor->estado; @endphp
+    <div class="px-4 sm:px-8 mb-6 motion-preset-slide-up">
+        @if($vendedorEstado === 'pendiente')
+            <div class="alert bg-warning/15 border border-warning text-warning-content font-inconsolata flex items-start gap-3 rounded-lg p-4">
+                <span class="icon-[tabler--clock] text-xl shrink-0 mt-0.5"></span>
+                <div class="text-sm md:text-base">
+                    <strong>Tu solicitud de vendedor está en revisión.</strong><br>
+                    Un administrador la revisará pronto.
+                </div>
+            </div>
+        @elseif($vendedorEstado === 'rechazado')
+            <div class="alert bg-error/15 border border-error text-error-content font-inconsolata flex items-start gap-3 rounded-lg p-4">
+                <span class="icon-[tabler--x] text-xl shrink-0 mt-0.5"></span>
+                <div class="text-sm md:text-base">
+                    <strong>Tu solicitud de vendedor fue rechazada.</strong>
+                </div>
+            </div>
+        @elseif($vendedorEstado === 'suspendido')
+            <div class="alert bg-warning/15 border border-warning text-warning-content font-inconsolata flex items-start gap-3 rounded-lg p-4">
+                <span class="icon-[tabler--alert-triangle] text-xl shrink-0 mt-0.5"></span>
+                <div class="text-sm md:text-base">
+                    <strong>Tu cuenta de vendedor está suspendida.</strong><br>
+                    Contactá al equipo de soporte para más información.
+                </div>
+            </div>
+        @endif
+    </div>
+@endif
 
 @if(auth()->check() && auth()->user()->isWriter())
 
@@ -309,8 +372,8 @@
                     <img id="preview-avatar"
                         src="
                         @if(Auth::user()->avatar)
-                            {{ str_contains(Auth::user()->avatar, 'http') 
-                                ? Auth::user()->avatar 
+                            {{ str_contains(Auth::user()->avatar, 'http')
+                                ? Auth::user()->avatar
                                 : asset('storage/' . Auth::user()->avatar) }}
                         @else
                             {{ asset('assets/img/default_avatar.jpg') }}
@@ -380,14 +443,20 @@
             <h1 class="text-xl font-serif">Tus Roles</h1>
         </div>
 
+        @php $rolesActivos = $user->roles->where('estado', 1); @endphp
+
         <p class="font-inconsolata mt-6">
-            Ahora mismo tienes permisos como
-            @foreach($user->roles as $rol)
-                <span class="font-inconsolata text-primary">
-                    <span class="font-black">{{ $rol->rol }}</span><span class="text-base-content"></span>
-                </span>@if(!$loop->last), @endif
-            @endforeach
-            .
+            @if($rolesActivos->isEmpty())
+                Todavía no tienes permisos activos.
+            @else
+                Ahora mismo tienes permisos como
+                @foreach($rolesActivos as $rol)
+                    <span class="font-inconsolata text-primary">
+                        <span class="font-black">{{ $rol->rol }}</span><span class="text-base-content"></span>
+                    </span>@if(!$loop->last), @endif
+                @endforeach
+                .
+            @endif
         </p>
 
         <div class="divider my-8 font-inconsolata">Modificar roles</div>
@@ -403,7 +472,7 @@
             </div>
 
             <div class="flex justify-center mt-4">
-                <button class="btn btn-accent text-accent-content font-inconsolata w-full text-sm"><span class="icon-[tabler--pig-money]"></span>Quiero ser Vendedor</button>
+                <a href="{{ route('vendedores_create') }}" class="btn btn-accent text-accent-content font-inconsolata w-full text-sm"><span class="icon-[tabler--pig-money]"></span>Quiero ser Vendedor</a>
             </div>
         </div>
 
@@ -441,7 +510,7 @@
 
         const select = document.getElementById("pais");
 
-        fetch("https://restcountries.com/v3.1/all?fields=name,cca2")
+        fetch("{{ route('paises') }}")
             .then(res => res.json())
             .then(data => {
 

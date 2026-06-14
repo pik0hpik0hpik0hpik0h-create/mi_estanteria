@@ -7,21 +7,20 @@
 
 <div class="p-4 sm:p-6 md:p-8 pb-0 max-w-7xl mx-auto">
 
-    {{-- BARRA STICKY: siempre visible al hacer scroll --}}
+    {{-- BARRA STICKY --}}
     <div class="sticky top-20 md:top-25 z-30 -mx-2 mb-6 md:mb-8 px-2 motion-preset-slide-down">
         <div class="flex flex-wrap gap-2 md:gap-3 justify-between items-center
                     bg-base-100/70 glass border border-base-300 rounded-xl shadow-md
                     px-3 py-2 md:px-4 md:py-3 backdrop-blur-md">
 
-            <a href="{{ route('admin.writers.index') }}"
+            <a href="{{ route('admin.vendedores.index') }}"
                class="btn btn-outline btn-sm font-inconsolata
                       transition-transform duration-200 hover:-translate-x-1">
                 <span class="icon-[tabler--arrow-left]"></span>
                 <span class="hidden sm:inline">Volver</span>
             </a>
 
-            {{-- Estado del escritor con badge animado --}}
-            @if($writer->estado === 'pendiente')
+            @if($vendedor->estado === 'pendiente')
                 <div class="flex items-center gap-2 font-inconsolata">
                     <span class="relative flex h-3 w-3">
                         <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-warning opacity-75"></span>
@@ -31,18 +30,18 @@
                 </div>
             @else
                 <span class="badge badge-lg font-inconsolata text-white
-                    {{ $writer->estado === 'aprobado' ? 'bg-emerald-600 border-emerald-600' : '' }}
-                    {{ $writer->estado === 'rechazado' ? 'bg-rose-600 border-rose-600' : '' }}
-                    {{ $writer->estado === 'suspendido' ? 'bg-amber-600 border-amber-600' : '' }}">
-                    {{ ucfirst($writer->estado) }}
+                    {{ $vendedor->estado === 'aprobado' ? 'bg-emerald-600 border-emerald-600' : '' }}
+                    {{ $vendedor->estado === 'rechazado' ? 'bg-rose-600 border-rose-600' : '' }}
+                    {{ $vendedor->estado === 'suspendido' ? 'bg-amber-600 border-amber-600' : '' }}">
+                    {{ ucfirst($vendedor->estado) }}
                 </span>
             @endif
 
-            @if($writer->estado === 'pendiente')
+            @if($vendedor->estado === 'pendiente')
                 <div class="flex flex-wrap gap-2 w-full sm:w-auto">
                     {{-- RECHAZAR --}}
                     <button type="button"
-                            onclick="document.getElementById('modal-rechazar').classList.remove('hidden')"
+                            onclick="document.getElementById('modal-rechazar-vendedor').classList.remove('hidden')"
                             class="font-inconsolata font-bold inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 rounded-lg
                                    bg-rose-600 hover:bg-rose-700 text-white shadow-md
                                    transition-all duration-200 hover:scale-105 active:scale-95
@@ -53,7 +52,7 @@
 
                     {{-- AUTORIZAR --}}
                     <button type="button"
-                            onclick="document.getElementById('modal-aprobar').classList.remove('hidden')"
+                            onclick="document.getElementById('modal-aprobar-vendedor').classList.remove('hidden')"
                             class="font-inconsolata font-bold inline-flex items-center justify-center gap-2 px-4 sm:px-5 py-2 rounded-lg
                                    bg-emerald-600 hover:bg-emerald-700 text-white shadow-md
                                    transition-all duration-200 hover:scale-105 active:scale-95
@@ -69,22 +68,21 @@
     {{-- ENCABEZADO --}}
     <div class="text-center mb-8 md:mb-10 motion-preset-focus">
 
-        {{-- Avatar circular del usuario --}}
         <div class="flex justify-center mb-4">
             <div class="avatar relative">
                 <div class="w-24 h-24 rounded-full border-4 border-primary shadow-lg overflow-hidden
                             transition-transform duration-300 hover:scale-110 hover:rotate-3">
                     <img class="w-full h-full object-cover" src="
-                        @if($writer->user?->avatar)
-                            {{ str_contains($writer->user->avatar, 'http')
-                                ? $writer->user->avatar
-                                : asset('storage/' . $writer->user->avatar) }}
+                        @if($vendedor->user?->avatar)
+                            {{ str_contains($vendedor->user->avatar, 'http')
+                                ? $vendedor->user->avatar
+                                : asset('storage/' . $vendedor->user->avatar) }}
                         @else
                             {{ asset('assets/img/default_avatar.jpg') }}
                         @endif
-                    " alt="Avatar de {{ $writer->nombre_pluma }}" />
+                    " alt="Avatar de {{ $vendedor->nombre_publico }}" />
                 </div>
-                @if($writer->estado === 'pendiente')
+                @if($vendedor->estado === 'pendiente')
                     <span class="absolute -bottom-1 -right-1 w-7 h-7 rounded-full bg-warning border-4 border-base-100
                                  flex items-center justify-center animate-bounce">
                         <span class="icon-[tabler--clock] text-white text-sm"></span>
@@ -93,9 +91,9 @@
             </div>
         </div>
 
-        <h1 class="text-2xl sm:text-3xl md:text-5xl font-serif mb-2 break-words">{{ $writer->nombre_pluma }}</h1>
+        <h1 class="text-2xl sm:text-3xl md:text-5xl font-serif mb-2 break-words">{{ $vendedor->nombre_publico }}</h1>
         <p class="font-inconsolata text-base-content/70 text-xs sm:text-sm md:text-base">
-            Solicitud enviada el {{ $writer->created_at?->format('d/m/Y H:i') }}
+            Solicitud enviada el {{ $vendedor->created_at?->format('d/m/Y H:i') }}
         </p>
     </div>
 
@@ -109,12 +107,12 @@
                 <span class="icon-[tabler--user] text-primary"></span>
                 Datos del usuario
             </h3>
-            <p><strong>Nombre:</strong> {{ $writer->user->name ?? '—' }}</p>
-            <p><strong>Email:</strong> {{ $writer->user->email ?? '—' }}</p>
+            <p><strong>Nombre:</strong> {{ $vendedor->user->name ?? '—' }}</p>
+            <p><strong>Email:</strong> {{ $vendedor->user->email ?? '—' }}</p>
             <p><strong>Verificado:</strong>
-                @if($writer->user?->email_verified_at)
+                @if($vendedor->user?->email_verified_at)
                     <span class="text-emerald-600 font-bold">Sí</span>
-                    <span class="text-base-content/60 text-sm">({{ $writer->user->email_verified_at->format('d/m/Y') }})</span>
+                    <span class="text-base-content/60 text-sm">({{ $vendedor->user->email_verified_at->format('d/m/Y') }})</span>
                 @else
                     <span class="text-rose-600 font-bold">No</span>
                 @endif
@@ -128,25 +126,22 @@
                 <span class="icon-[tabler--id] text-primary"></span>
                 Documento de identidad
             </h3>
-            <p><strong>Tipo:</strong> {{ strtoupper($writer->tipo_documento ?? '—') }}</p>
-            <p><strong>Número:</strong> {{ $writer->documento_identidad }}</p>
-            <p><strong>País:</strong> {{ $writer->pais ?? '—' }}</p>
-            <p><strong>Ciudad:</strong> {{ $writer->ciudad ?? '—' }}</p>
-            <p><strong>Teléfono:</strong> {{ $writer->telefono ?? '—' }}</p>
+            <p><strong>Tipo:</strong> {{ strtoupper($vendedor->tipo_documento ?? '—') }}</p>
+            <p><strong>Número:</strong> {{ $vendedor->documento_identidad }}</p>
         </div>
 
-        <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-sm border border-transparent break-words md:col-span-2
+        <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-sm border border-transparent md:col-span-2 break-words
                     intersect:motion-preset-focus
                     transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/40">
             <h3 class="font-bold text-lg mb-4 border-b border-base-content/20 pb-2 flex items-center gap-2">
                 <span class="icon-[tabler--quote] text-primary"></span>
                 Biografía
             </h3>
-            <p class="italic text-base-content/90">"{{ $writer->perfil?->bio ?? $writer->biografia ?? 'No proporcionada.' }}"</p>
+            <p class="italic text-base-content/90">"{{ $vendedor->perfil?->bio ?? 'No proporcionada.' }}"</p>
         </div>
 
-        @if($writer->perfil)
-        <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-sm border border-transparent break-words md:col-span-2
+        @if($vendedor->perfil)
+        <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-sm border border-transparent md:col-span-2 break-words
                     intersect:motion-preset-slide-up
                     transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/40">
             <h3 class="font-bold text-lg mb-4 border-b border-base-content/20 pb-2 flex items-center gap-2">
@@ -154,24 +149,24 @@
                 Redes y web
             </h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-1">
-                <p><span class="icon-[tabler--brand-instagram] mr-2"></span><strong>Instagram:</strong> {{ $writer->perfil->instagram ?? '—' }}</p>
-                <p><span class="icon-[tabler--brand-facebook] mr-2"></span><strong>Facebook:</strong> {{ $writer->perfil->facebook ?? '—' }}</p>
-                <p><span class="icon-[tabler--brand-x] mr-2"></span><strong>X:</strong> {{ $writer->perfil->x ?? '—' }}</p>
-                <p><span class="icon-[tabler--world] mr-2"></span><strong>Web:</strong> {{ $writer->perfil->web ?? '—' }}</p>
+                <p><span class="icon-[tabler--brand-instagram] mr-2"></span><strong>Instagram:</strong> {{ $vendedor->perfil->instagram ?? '—' }}</p>
+                <p><span class="icon-[tabler--brand-facebook] mr-2"></span><strong>Facebook:</strong> {{ $vendedor->perfil->facebook ?? '—' }}</p>
+                <p><span class="icon-[tabler--brand-x] mr-2"></span><strong>X:</strong> {{ $vendedor->perfil->x ?? '—' }}</p>
+                <p><span class="icon-[tabler--world] mr-2"></span><strong>Web:</strong> {{ $vendedor->perfil->web ?? '—' }}</p>
             </div>
         </div>
         @endif
 
-        @if($writer->payAccount)
-        <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-sm border border-transparent break-words md:col-span-2
+        @if($vendedor->payAccount)
+        <div class="bg-base-200 p-4 md:p-6 rounded-xl shadow-sm border border-transparent md:col-span-2 break-words
                     intersect:motion-preset-slide-up
                     transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:border-primary/40">
             <h3 class="font-bold text-lg mb-4 border-b border-base-content/20 pb-2 flex items-center gap-2">
                 <span class="icon-[tabler--brand-paypal] text-primary"></span>
                 Cuenta PayPal
             </h3>
-            <p><strong>Email PayPal:</strong> {{ $writer->payAccount->paypal_email }}</p>
-            <p><strong>Nombre de la cuenta:</strong> {{ $writer->payAccount->paypal_nombre_cuenta }}</p>
+            <p><strong>Email PayPal:</strong> {{ $vendedor->payAccount->paypal_email }}</p>
+            <p><strong>Nombre de la cuenta:</strong> {{ $vendedor->payAccount->paypal_nombre_cuenta }}</p>
         </div>
         @endif
 
@@ -179,31 +174,31 @@
 
 </div>
 
-{{-- MODAL DE CONFIRMACIÓN: APROBAR --}}
-@if($writer->estado === 'pendiente')
-<div id="modal-aprobar" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+{{-- MODALES --}}
+@if($vendedor->estado === 'pendiente')
+<div id="modal-aprobar-vendedor" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
-         onclick="document.getElementById('modal-aprobar').classList.add('hidden')"></div>
-    <div class="relative bg-base-100 rounded-2xl shadow-2xl p-8 max-w-md w-full motion-preset-pop">
+         onclick="document.getElementById('modal-aprobar-vendedor').classList.add('hidden')"></div>
+    <div class="relative bg-base-100 rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full motion-preset-pop">
         <div class="flex justify-center mb-4">
             <div class="size-16 rounded-full bg-emerald-100 flex items-center justify-center">
                 <span class="icon-[tabler--check] text-emerald-600 text-4xl"></span>
             </div>
         </div>
-        <h2 class="font-serif text-2xl text-center mb-2">¿Autorizar a este escritor?</h2>
-        <p class="font-inconsolata text-center text-base-content/70 mb-6">
-            <strong>{{ $writer->nombre_pluma }}</strong> podrá publicar libros en la plataforma.
+        <h2 class="font-serif text-xl md:text-2xl text-center mb-2">¿Autorizar a este vendedor?</h2>
+        <p class="font-inconsolata text-center text-base-content/70 mb-6 text-sm md:text-base">
+            <strong>{{ $vendedor->nombre_publico }}</strong> podrá recomendar libros y ganar comisiones.
         </p>
-        <div class="flex gap-3 justify-center">
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
             <button type="button"
-                    onclick="document.getElementById('modal-aprobar').classList.add('hidden')"
-                    class="btn btn-outline font-inconsolata">
+                    onclick="document.getElementById('modal-aprobar-vendedor').classList.add('hidden')"
+                    class="btn btn-outline font-inconsolata order-2 sm:order-1">
                 Cancelar
             </button>
-            <form action="{{ route('admin.writers.approve', $writer) }}" method="POST">
+            <form action="{{ route('admin.vendedores.approve', $vendedor) }}" method="POST" class="order-1 sm:order-2">
                 @csrf
                 <button type="submit"
-                        class="font-inconsolata font-bold inline-flex items-center gap-2 px-5 py-2 rounded-lg
+                        class="font-inconsolata font-bold inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg w-full
                                bg-emerald-600 hover:bg-emerald-700 text-white shadow-md
                                transition-transform duration-200 hover:scale-105">
                     <span class="icon-[tabler--check]"></span>
@@ -214,30 +209,29 @@
     </div>
 </div>
 
-{{-- MODAL DE CONFIRMACIÓN: RECHAZAR --}}
-<div id="modal-rechazar" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
+<div id="modal-rechazar-vendedor" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"
-         onclick="document.getElementById('modal-rechazar').classList.add('hidden')"></div>
-    <div class="relative bg-base-100 rounded-2xl shadow-2xl p-8 max-w-md w-full motion-preset-pop">
+         onclick="document.getElementById('modal-rechazar-vendedor').classList.add('hidden')"></div>
+    <div class="relative bg-base-100 rounded-2xl shadow-2xl p-6 md:p-8 max-w-md w-full motion-preset-pop">
         <div class="flex justify-center mb-4">
             <div class="size-16 rounded-full bg-rose-100 flex items-center justify-center">
                 <span class="icon-[tabler--x] text-rose-600 text-4xl"></span>
             </div>
         </div>
-        <h2 class="font-serif text-2xl text-center mb-2">¿Rechazar a este escritor?</h2>
-        <p class="font-inconsolata text-center text-base-content/70 mb-6">
-            <strong>{{ $writer->nombre_pluma }}</strong> no podrá publicar libros. Puedes revertirlo después si cambias de opinión.
+        <h2 class="font-serif text-xl md:text-2xl text-center mb-2">¿Rechazar a este vendedor?</h2>
+        <p class="font-inconsolata text-center text-base-content/70 mb-6 text-sm md:text-base">
+            <strong>{{ $vendedor->nombre_publico }}</strong> no podrá recomendar libros. Puedes revertirlo después.
         </p>
-        <div class="flex gap-3 justify-center">
+        <div class="flex flex-col sm:flex-row gap-3 justify-center">
             <button type="button"
-                    onclick="document.getElementById('modal-rechazar').classList.add('hidden')"
-                    class="btn btn-outline font-inconsolata">
+                    onclick="document.getElementById('modal-rechazar-vendedor').classList.add('hidden')"
+                    class="btn btn-outline font-inconsolata order-2 sm:order-1">
                 Cancelar
             </button>
-            <form action="{{ route('admin.writers.reject', $writer) }}" method="POST">
+            <form action="{{ route('admin.vendedores.reject', $vendedor) }}" method="POST" class="order-1 sm:order-2">
                 @csrf
                 <button type="submit"
-                        class="font-inconsolata font-bold inline-flex items-center gap-2 px-5 py-2 rounded-lg
+                        class="font-inconsolata font-bold inline-flex items-center justify-center gap-2 px-5 py-2 rounded-lg w-full
                                bg-rose-600 hover:bg-rose-700 text-white shadow-md
                                transition-transform duration-200 hover:scale-105">
                     <span class="icon-[tabler--x]"></span>
@@ -248,12 +242,11 @@
     </div>
 </div>
 
-{{-- ESC cierra los modales --}}
 <script>
     document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-            document.getElementById('modal-aprobar')?.classList.add('hidden');
-            document.getElementById('modal-rechazar')?.classList.add('hidden');
+            document.getElementById('modal-aprobar-vendedor')?.classList.add('hidden');
+            document.getElementById('modal-rechazar-vendedor')?.classList.add('hidden');
         }
     });
 </script>

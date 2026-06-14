@@ -5,12 +5,12 @@
 
 <div class="mt-15 md:mt-25"></div>
 
-<div class="p-8 motion-preset-focus max-w-7xl mx-auto">
-    <h1 class="text-4xl font-serif mb-6">Panel Admin</h1>
+<div class="p-4 sm:p-6 md:p-8 motion-preset-focus max-w-7xl mx-auto">
+    <h1 class="text-2xl sm:text-3xl md:text-4xl font-serif mb-4 md:mb-6">Panel Admin</h1>
 
     @include('admin.tabs', ['activeTab' => 'books'])
 
-    <h2 class="text-2xl font-serif mb-4">Autorización de Libros</h2>
+    <h2 class="text-lg sm:text-xl md:text-2xl font-serif mb-4">Autorización de Libros</h2>
 
     @if(session('success'))
         <div class="alert alert-success mb-6 shadow-sm">
@@ -19,7 +19,8 @@
         </div>
     @endif
 
-    <div class="overflow-x-auto bg-base-200 rounded-lg shadow-sm">
+    {{-- TABLA: visible en md+ --}}
+    <div class="hidden md:block overflow-x-auto bg-base-200 rounded-lg shadow-sm">
         <table class="table font-inconsolata w-full">
             <thead>
                 <tr>
@@ -59,7 +60,32 @@
             </tbody>
         </table>
     </div>
-    
+
+    {{-- CARDS: visible solo en mobile --}}
+    <div class="md:hidden space-y-3">
+        @forelse ($books as $book)
+            <div class="bg-base-200 rounded-lg shadow-sm p-4 flex gap-4 font-inconsolata">
+                <div class="avatar shrink-0">
+                    <div class="w-14 h-20 rounded-sm">
+                        <img src="{{ $book->portada ? asset('storage/' . $book->portada) : asset('assets/img/book_cover_mockup.jpg') }}" alt="Portada" />
+                    </div>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="font-bold text-sm truncate">{{ $book->titulo }}</h3>
+                    <p class="text-xs text-base-content/70 truncate">{{ $book->writer->nombre_pluma ?? 'Desconocido' }}</p>
+                    <p class="text-xs text-base-content/50">{{ $book->updated_at->format('d/m/Y') }}</p>
+                    <a href="{{ route('admin.books.show', $book) }}" class="btn btn-xs btn-primary mt-2">
+                        Revisar
+                    </a>
+                </div>
+            </div>
+        @empty
+            <div class="bg-base-200 rounded-lg p-6 text-center text-base-content/50">
+                No hay libros pendientes de revisión. ¡Todo al día!
+            </div>
+        @endforelse
+    </div>
+
     <div class="mt-4">
         {{ $books->links() }}
     </div>

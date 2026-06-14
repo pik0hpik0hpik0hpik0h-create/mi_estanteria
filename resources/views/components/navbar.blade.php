@@ -33,8 +33,8 @@
                                 <div class="size-5 rounded-full">
                                     <img src="
                                         @if(Auth::user()->avatar)
-                                            {{ str_contains(Auth::user()->avatar, 'http') 
-                                                ? Auth::user()->avatar 
+                                            {{ str_contains(Auth::user()->avatar, 'http')
+                                                ? Auth::user()->avatar
                                                 : asset('storage/' . Auth::user()->avatar) }}
                                         @else
                                             {{ asset('assets/img/default_avatar.jpg') }}
@@ -106,8 +106,8 @@
                         <div class="size-10 rounded-full border-2 border-primary">
                             <img src="
                                 @if(Auth::user()->avatar)
-                                    {{ str_contains(Auth::user()->avatar, 'http') 
-                                        ? Auth::user()->avatar 
+                                    {{ str_contains(Auth::user()->avatar, 'http')
+                                        ? Auth::user()->avatar
                                         : asset('storage/' . Auth::user()->avatar) }}
                                 @else
                                     {{ asset('assets/img/default_avatar.jpg') }}
