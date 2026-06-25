@@ -66,91 +66,126 @@ class CartController extends Controller
     |--------------------------------------------------------------------------
     */
 
-    public function add(Book $book)
+    public function add(Request $request, Book $book, $codigo_vendedor = null)
     {
-    /*
-    |--------------------------------------------------------------------------
-    | VALIDACIONES
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | VALIDACIONES BÁSICAS
+        |--------------------------------------------------------------------------
+        */
 
-    // NO AGREGAR SU PROPIO LIBRO
-    if (
-        $book->writer &&
-        $book->writer->user_id === Auth::id()
-    ) {
-        return back()->with(
-            'error',
-            'No puedes comprar tu propio libro.'
+        // NO AGREGAR SU PROPIO LIBRO
+        if (
+            $book->writer &&
+            $book->writer->user_id === Auth::id()
+        ) {
+            return back()->with(
+                'error',
+                'No puedes comprar tu propio libro.'
+            );
+        }
+
+        // LIBRO PUBLICADO
+        if ($book->estado !== 'publicado') {
+            return back()->with(
+                'error',
+                'Este libro no está disponible.'
+            );
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | LÓGICA DE AFILIADOS (VENDEDORES)
+        |--------------------------------------------------------------------------
+        */
+        
+        $vendedor_id = null;
+        $descuento_aplicado = 0;
+
+        if ($codigo_vendedor) {
+            // Buscamos si el código de referido existe y está activo
+            $vendedor = \App\Models\Vendedor::where('codigo_vendedor', $codigo_vendedor)
+                ->where('estado', 'aprobado')
+                ->first();
+
+            // Verificamos que no sea el mismo usuario intentando auto-referirse
+            if ($vendedor && $vendedor->user_id !== Auth::id()) {
+                $vendedor_id = $vendedor->id;
+
+                // Obtenemos el descuento configurado dinámicamente en BD (por defecto 10%)
+                $porcentaje_descuento = \App\Models\Configuracion::where('clave', 'descuento_comprador')->value('valor') ?? 10;
+                
+                // Calculamos cuánto dinero se le descontará
+                $descuento_aplicado = ($book->precio * $porcentaje_descuento) / 100;
+            }
+        }
+
+        /*
+        |--------------------------------------------------------------------------
+        | OBTENER O CREAR CARRITO
+        |--------------------------------------------------------------------------
+        */
+
+        $cart = Cart::firstOrCreate(
+            [
+                'user_id' => Auth::id(),
+                'estado' => 'activo'
+            ]
         );
-    }
 
-    // LIBRO PUBLICADO
-    if ($book->estado !== 'publicado') {
+        /*
+        |--------------------------------------------------------------------------
+        | VERIFICAR SI YA EXISTE
+        |--------------------------------------------------------------------------
+        */
 
-        return back()->with(
-            'error',
-            'Este libro no está disponible.'
-        );
-    }
+        $item = CartItem::where('cart_id', $cart->id)
+            ->where('book_id', $book->id)
+            ->first();
 
-    /*
-    |--------------------------------------------------------------------------
-    | OBTENER O CREAR CARRITO
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | EVITAR DUPLICADOS
+        |--------------------------------------------------------------------------
+        */
 
-    $cart = Cart::firstOrCreate(
-        [
-            'user_id' => Auth::id(),
-            'estado' => 'activo'
-        ]
-    );
+        if ($item) {
+            return back()->with(
+                'warning',
+                'Este libro ya está en tu carrito.'
+            );
+        }
 
-    /*
-    |--------------------------------------------------------------------------
-    | VERIFICAR SI YA EXISTE
-    |--------------------------------------------------------------------------
-    */
+        /*
+        |--------------------------------------------------------------------------
+        | CREAR ITEM (CON DESCUENTO)
+        |--------------------------------------------------------------------------
+        */
 
-    $item = CartItem::where('cart_id', $cart->id)
-        ->where('book_id', $book->id)
-        ->first();
+        $subtotal_final = $book->precio - $descuento_aplicado;
+        // Aseguramos que el subtotal nunca sea negativo
+        if($subtotal_final < 0) {
+             $subtotal_final = 0;
+        }
 
-    /*
-    |--------------------------------------------------------------------------
-    | EVITAR DUPLICADOS
-    |--------------------------------------------------------------------------
-    */
+        CartItem::create([
+            'cart_id'            => $cart->id,
+            'book_id'            => $book->id,
+            'vendedor_id'        => $vendedor_id,        // Registramos el referido
+            'cantidad'           => 1,
+            'precio_unitario'    => $book->precio,
+            'descuento_aplicado' => $descuento_aplicado, // Registramos la rebaja
+            'subtotal'           => $subtotal_final      // Guardamos el precio rebajado
+        ]);
 
-    if ($item) {
+        $mensaje = 'Libro agregado al carrito.';
+        if ($descuento_aplicado > 0) {
+            $mensaje = '¡Libro agregado! Descuento de afiliado aplicado.';
+        }
 
-        return back()->with(
-            'warning',
-            'Este libro ya está en tu carrito.'
-        );
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | CREAR ITEM
-    |--------------------------------------------------------------------------
-    */
-
-    CartItem::create([
-        'cart_id' => $cart->id,
-        'book_id' => $book->id,
-        'cantidad' => 1,
-        'precio_unitario' => $book->precio,
-        'subtotal' => $book->precio
-    ]);
-
-    return redirect()
-        ->route('cart.index')
-        ->with(
-            'success',
-            'Libro agregado al carrito.'
-        );
+        return redirect()
+            ->route('cart.index')
+            ->with('success', $mensaje);
     }
 
     /*

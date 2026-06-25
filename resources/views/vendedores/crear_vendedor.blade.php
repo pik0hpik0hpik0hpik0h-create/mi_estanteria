@@ -76,7 +76,7 @@
                 </ul>
 
                 <!-- FORM -->
-                <form method="POST" action="{{ route('vendedores_store') }}" class="text-center">
+                <form method="POST" action="{{ route('vendedores_store') }}" class="text-center" novalidate>
                     @csrf
 
                     <!-- PASO 1: PERFIL -->

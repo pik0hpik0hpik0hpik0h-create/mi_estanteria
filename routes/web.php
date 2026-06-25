@@ -84,7 +84,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/libros/{book}', [BookController::class, 'update'])->name('books.update');
 
     Route::get('/carrito', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/carrito/agregar/{book}', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/carrito/agregar/{book}/{codigo_vendedor?}', [CartController::class, 'add'])->name('cart.add');
     Route::delete('/carrito/eliminar/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
     Route::delete('/carrito/limpiar', [CartController::class, 'clear'])->name('cart.clear');
 

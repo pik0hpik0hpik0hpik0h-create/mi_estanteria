@@ -18,6 +18,7 @@ class Vendedor extends Model
         'tipo_documento',
         'estado',
         'aprobado_en',
+        'codigo_vendedor',
     ];
 
     protected $casts = [

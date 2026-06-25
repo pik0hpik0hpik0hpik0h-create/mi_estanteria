@@ -45,7 +45,7 @@
             @if(!$canEdit)
 
             <form 
-            action="{{ route('cart.add', $book) }}"
+            action="{{ route('cart.add', ['book' => $book->id, 'codigo_vendedor' => request()->query('ref')]) }}"
             method="POST"
             >
 

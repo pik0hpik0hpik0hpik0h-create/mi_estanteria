@@ -6,6 +6,7 @@ use App\Models\Vendedor;
 use App\Models\Rol;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str; // <-- ¡Importante para generar el código aleatorio!
 
 class AdminVendedorController extends Controller
 {
@@ -47,17 +48,22 @@ class AdminVendedorController extends Controller
     }
 
     /**
-     * Aprueba: vendedor.estado='aprobado' y activa el rol 'vendedor'.
+     * Aprueba: vendedor.estado='aprobado', genera código único y activa el rol 'vendedor'.
      */
     public function approve(Vendedor $vendedor)
     {
         $this->aseguraAdmin();
 
-        DB::transaction(function () use ($vendedor) {
+        // Generamos el código único antes de la transacción
+        $codigoAleatorio = strtoupper(Str::random(5));
+        $codigoFinal = 'VEND-' . $vendedor->id . '-' . $codigoAleatorio;
+
+        DB::transaction(function () use ($vendedor, $codigoFinal) {
 
             $vendedor->update([
-                'estado'      => 'aprobado',
-                'aprobado_en' => now(),
+                'estado'          => 'aprobado',
+                'aprobado_en'     => now(),
+                'codigo_vendedor' => $codigoFinal // <-- Aquí guardamos el código generado
             ]);
 
             Rol::updateOrCreate(
@@ -73,7 +79,7 @@ class AdminVendedorController extends Controller
         });
 
         return redirect()->route('admin.vendedores.index')
-            ->with('success', 'El vendedor "' . ($vendedor->nombre_publico ?? 'N/A') . '" ha sido aprobado.');
+            ->with('success', 'El vendedor "' . ($vendedor->nombre_publico ?? 'N/A') . '" ha sido aprobado. Su código asignado es: ' . $codigoFinal);
     }
 
     /**
