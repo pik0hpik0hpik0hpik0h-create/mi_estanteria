@@ -14,6 +14,7 @@ use App\Models\UserBook;
 use App\Models\WriterWallet;
 use App\Models\WalletTransaction;
 use App\Models\Configuracion;
+use App\Models\VendedorWallet;
 
 class PaypalController extends Controller
 {
@@ -188,9 +189,20 @@ class PaypalController extends Controller
                                 'referencia_id' => $orderItem->id
                             ]);
                         }
+                        // F. NUEVO: DEPOSITAR GANANCIA DIGITAL AL VENDEDOR
+                        if ($item->vendedor_id && $comision_vendedor_item > 0) {
+                            $vWallet = VendedorWallet::firstOrCreate(
+                                ['vendedor_id' => $item->vendedor_id],
+                                ['saldo_disponible' => 0, 'saldo_retenido' => 0, 'total_generado' => 0, 'total_pagado' => 0]
+                            );
+
+                            $vWallet->saldo_disponible += $comision_vendedor_item;
+                            $vWallet->total_generado   += $comision_vendedor_item;
+                            $vWallet->save();
+                        }
                     }
 
-                    // F. VACIAR Y CERRAR EL CARRITO
+                    // G. VACIAR Y CERRAR EL CARRITO
                     $cart->items()->delete();
                     $cart->update(['estado' => 'convertido']);
                 });
