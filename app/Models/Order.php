@@ -13,6 +13,7 @@ class Order extends Model
         'user_id',
         'codigo',
         'subtotal',
+        'descuento_total',
         'impuestos',
         'comision',
         'total',

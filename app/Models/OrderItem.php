@@ -13,8 +13,11 @@ class OrderItem extends Model
         'order_id',
         'book_id',
         'writer_id',
+        'vendedor_id',
         'precio',
+        'descuento_aplicado',
         'comision_plataforma',
+        'comision_vendedor',
         'ganancia_writer'
     ];
 
