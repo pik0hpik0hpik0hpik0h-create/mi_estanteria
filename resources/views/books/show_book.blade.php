@@ -64,6 +64,26 @@
 
             </form>
 
+
+            {{-- Copiar enlace de vendedor --}}
+                @if(auth()->check() && auth()->user()->isVendedor())
+                    @php
+                        // Generamos el enlace con el código de vendedor
+                        $enlaceVenta = route('books.show', [
+                            'book' => $book->id, 
+                            'ref' => auth()->user()->vendedor->codigo_vendedor
+                        ]);
+                    @endphp
+                    <button 
+                        type="button" 
+                        onclick="copiarAlPortapapeles('{{ $enlaceVenta }}', this)" 
+                        class="btn btn-outline btn-accent rounded-2xl"
+                    >
+                        <span class="icon-[tabler--copy]"></span>
+                        Copiar enlace
+                    </button>
+                @endif
+
         @endif
 
         </div>
@@ -457,5 +477,21 @@
 </form>
 
 @endif
-
+<script>
+    function copiarAlPortapapeles(texto, btn) {
+        navigator.clipboard.writeText(texto).then(() => {
+            const iconoOriginal = btn.innerHTML;
+            // Feedback visual
+            btn.innerHTML = '<span class="icon-[tabler--check]"></span> ¡Copiado!';
+            btn.classList.replace('btn-accent', 'btn-success');
+            
+            setTimeout(() => {
+                btn.innerHTML = iconoOriginal;
+                btn.classList.replace('btn-success', 'btn-accent');
+            }, 2000);
+        }).catch(err => {
+            console.error('Error al copiar: ', err);
+        });
+    }
+</script>
 @endsection

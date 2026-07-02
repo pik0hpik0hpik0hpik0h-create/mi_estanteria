@@ -111,30 +111,43 @@ class UsuarioController extends Controller
     // PERFIL DE USUARIO
     public function perfil()
     {
-        $user = Auth::user()->load('roles', 'perfil', 'writer.wallet');
-
-        $wallet = $user->writer->wallet ?? null;
+        // Cargamos las relaciones de la billetera tanto para escritor como para vendedor
+        $user = Auth::user()->load('roles', 'perfil', 'writer.wallet', 'vendedor.wallet');
 
         $writer = $user->writer;
+        $vendedor = $user->vendedor;
 
-        $lastWithdraw = $writer?->withdrawRequests()
-            ->latest()
-            ->first();
-
-        $hasPending = $writer?->withdrawRequests()
-            ->where('estado', 'pendiente')
-            ->exists();
-
+        $saldo_disponible = 0;
+        $lastWithdraw = null;
+        $hasPending = false;
         $libros = collect();
 
-        if ($writer) {
-
-            $libros = Book::with('category')
-                ->where('writer_id', $writer->id)
-                ->latest()
-                ->get();
-
+        // 1. Extraer datos si es Escritor
+        if ($writer && $user->isWriter()) {
+            $saldo_disponible += $writer->wallet->saldo_disponible ?? 0;
+            $lastWithdraw = $writer->withdrawRequests()->latest()->first();
+            $hasPending = $writer->withdrawRequests()->where('estado', 'pendiente')->exists();
+            $libros = Book::with('category')->where('writer_id', $writer->id)->latest()->get();
         }
+
+        // 2. Extraer y sumar datos si es Vendedor
+        if ($vendedor && $user->isVendedor()) {
+            $saldo_disponible += $vendedor->wallet->saldo_disponible ?? 0;
+            
+            // Verificamos si el vendedor tiene un retiro más reciente que el del escritor
+            $vendedorWithdraw = $vendedor->withdrawRequests()->latest()->first();
+            if ($vendedorWithdraw && (!$lastWithdraw || $vendedorWithdraw->created_at > $lastWithdraw->created_at)) {
+                $lastWithdraw = $vendedorWithdraw;
+            }
+            
+            // Si el escritor no tenía retiros pendientes, revisamos si el vendedor los tiene
+            if (!$hasPending) {
+                $hasPending = $vendedor->withdrawRequests()->where('estado', 'pendiente')->exists();
+            }
+        }
+
+        // Creamos un objeto genérico de wallet para pasarlo a la vista de manera unificada
+        $wallet = (object) ['saldo_disponible' => $saldo_disponible];
 
         return view('auth.perfil', compact(
             'user',

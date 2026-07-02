@@ -104,7 +104,7 @@
     </div>
 @endif
 
-@if(auth()->check() && auth()->user()->isWriter())
+@if(auth()->check() && (auth()->user()->isWriter() || auth()->user()->isVendedor()))
 
 <div class="md:flex justify-center px-8 gap-8 mb-8">
 
@@ -198,7 +198,7 @@
 </div>
 
 
-
+@if(auth()->user()->isWriter())
 <div class="mx-8 mb-8 bg-base-300 p-6.5 rounded-xl flex items-center gap-10 overflow-x-auto motion-preset-slide-left">
 
     <a href="{{ route('books.create') }}" class="bg-primary rounded-lg h-90 min-w-65 duration-300 relative hover:scale-105 active:scale-98 flex items-center justify-center">
@@ -273,6 +273,7 @@
 
 </div>
 
+@endif
 @endif
 
 

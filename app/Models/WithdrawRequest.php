@@ -8,6 +8,7 @@ class WithdrawRequest extends Model
 {
     protected $fillable = [
         'writer_id',
+        'vendedor_id',
         'wallet_id',
         'monto',
         'estado',
@@ -20,11 +21,23 @@ class WithdrawRequest extends Model
 
     public function writer()
     {
-        return $this->belongsTo(User::class, 'writer_id');
+        // Apuntamos a Writer::class porque en la migración la llave foránea va a la tabla writers
+        return $this->belongsTo(Writer::class, 'writer_id');
     }
 
-    public function wallet()
+    public function vendedor()
+    {
+        return $this->belongsTo(Vendedor::class, 'vendedor_id');
+    }
+
+    // Dividimos la relación de la billetera según el rol
+    public function writerWallet()
     {
         return $this->belongsTo(WriterWallet::class, 'wallet_id');
+    }
+
+    public function vendedorWallet()
+    {
+        return $this->belongsTo(VendedorWallet::class, 'wallet_id');
     }
 }

@@ -45,4 +45,14 @@ class Vendedor extends Model
     {
         return $this->hasOne(VendedorPaypalAccount::class, 'vendedor_id', 'id');
     }
+
+    public function wallet()
+    {
+        return $this->hasOne(VendedorWallet::class, 'vendedor_id', 'id');
+    }
+
+    public function withdrawRequests()
+    {
+        return $this->hasMany(WithdrawRequest::class, 'vendedor_id', 'id');
+    }
 }
