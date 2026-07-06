@@ -79,4 +79,9 @@ public function buyers()
 {
     return $this->hasMany(UserBook::class);
 }
+
+public function userBooks()
+{
+    return $this->hasMany(UserBook::class);
+}
 }

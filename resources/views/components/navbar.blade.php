@@ -21,13 +21,13 @@
 
             </div>
 
-
             <div id="navbar-collapse" class="collapse hidden md:flex md:justify-center md:flex-1 overflow-hidden transition-[height] duration-300 max-md:w-full">
 
                 <ul class="menu md:menu-horizontal gap-2 p-0 text-base-content max-md:mt-2">
 
                     @auth
                     <div class="mt-2 flex gap-2">
+
                         <a class="btn btn-primary w-1/2 md:hidden text-sm md:text-lg" href="{{ route('perfil') }}">
                             <div class="avatar">
                                 <div class="size-5 rounded-full">
@@ -39,7 +39,7 @@
                                         @else
                                             {{ asset('assets/img/default_avatar.jpg') }}
                                         @endif
-                                        "
+                                    "
                                     alt="Avatar"
                                     />
                                 </div>
@@ -54,6 +54,7 @@
                                 Salir
                             </button>
                         </form>
+
                     </div>
                     @else
                     <a class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">
@@ -61,44 +62,95 @@
                     </a>
                     @endauth
 
-                    <a href="{{ route('cart.index') }}" class="btn md:hidden font-light"><span class="icon-[tabler--shopping-cart] size-5"></span></a>
+                    <a href="{{ route('cart.index') }}" class="btn md:hidden font-light">
+                        <span class="icon-[tabler--shopping-cart] size-5"></span>
+                    </a>
 
-                    <li><a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}">Inicio</a></li>
+                    <li>
+                        <a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}">
+                            Inicio
+                        </a>
+                    </li>
 
-                    {{-- INICIO: PESTAÑA ADMIN --}}
+                    {{-- MI ESTANTERÍA --}}
+                    @auth
+                    <li>
+                        <a class="hover:text-primary text-sm md:text-lg font-semibold"
+                           href="{{ route('library.index') }}">
+                            Mi Estantería
+                        </a>
+                    </li>
+                    @endauth
+
+                    {{-- ADMIN --}}
                     @auth
                         @if(Auth::user()->is_admin)
                             <li>
-                                <a class="hover:text-primary text-sm md:text-lg font-bold" href="{{ route('admin.books.index') }}">
+                                <a class="hover:text-primary text-sm md:text-lg font-bold"
+                                   href="{{ route('admin.books.index') }}">
                                     Panel Admin
                                 </a>
                             </li>
                         @endif
                     @endauth
-                    {{-- FIN: PESTAÑA ADMIN --}}
 
                     <li class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]">
+
                         <button type="button" class="hover:text-primary text-sm md:text-lg dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content">
                             Explorar
                             <span class="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
                         </button>
 
                         <ul class="dropdown-menu dropdown-open:opacity-100 hidden bg-base-300/50 glass">
-                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="#">Todos</a></li>
-                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="{{ route('index') }}#mas_vendidos">Más Vendidos</a></li>
-                            <li><a class="hover:text-primary text-sm md:text-lg dropdown-item" href="{{ route('index') }}#novedades">Novedades</a></li>
+
+                            <li>
+                                <a class="hover:text-primary text-sm md:text-lg dropdown-item" href="#">
+                                    Todos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="hover:text-primary text-sm md:text-lg dropdown-item"
+                                   href="{{ route('index') }}#mas_vendidos">
+                                    Más Vendidos
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="hover:text-primary text-sm md:text-lg dropdown-item"
+                                   href="{{ route('index') }}#novedades">
+                                    Novedades
+                                </a>
+                            </li>
+
                         </ul>
+
                     </li>
 
-                    <li><a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}#contacto">Contacto</a></li>
+                    <li>
+                        <a class="hover:text-primary text-sm md:text-lg"
+                           href="{{ route('index') }}#contacto">
+                            Contacto
+                        </a>
+                    </li>
 
                 </ul>
 
             </div>
 
+            {{-- ICONOS DERECHA (DESKTOP) --}}
             <div class="items-center justify-between w-auto hidden md:flex gap-3">
 
-                <a href="{{ route('cart.index') }}" class="btn bg-none font-light"><span class="icon-[tabler--shopping-cart] size-5"></span></a>
+                @auth
+                <a href="{{ route('library.index') }}" class="btn btn-outline btn-primary">
+                    <span class="icon-[tabler--books] size-5"></span>
+                    Mi Estantería
+                </a>
+                @endauth
+
+                <a href="{{ route('cart.index') }}" class="btn bg-none font-light">
+                    <span class="icon-[tabler--shopping-cart] size-5"></span>
+                </a>
 
                 @auth
                 <a href="{{ route('perfil') }}">
@@ -112,19 +164,22 @@
                                 @else
                                     {{ asset('assets/img/default_avatar.jpg') }}
                                 @endif
-                                "
-                                alt="Avatar"
+                            "
+                            alt="Avatar"
                             />
                         </div>
                     </div>
                 </a>
                 @else
-                    <a class="btn btn-primary text-lg" href="{{ route('login') }}">Ingresar</a>
+                    <a class="btn btn-primary text-lg" href="{{ route('login') }}">
+                        Ingresar
+                    </a>
                 @endauth
 
             </div>
 
         </div>
+
     </div>
 
 </nav>

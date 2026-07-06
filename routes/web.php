@@ -13,6 +13,7 @@ use App\Http\Controllers\AdminWriterController;
 use App\Http\Controllers\VendedorController;
 use App\Http\Controllers\AdminVendedorController;
 use App\Http\Controllers\PaisController;
+use App\Http\Controllers\LibraryController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 
@@ -95,6 +96,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/paypal/create', [PaypalController::class, 'create'])->name('paypal.create');
     Route::get('/paypal/success', [PaypalController::class, 'success'])->name('paypal.success');
     Route::get('/paypal/cancel', [PaypalController::class, 'cancel'])->name('paypal.cancel');
+
+    Route::middleware('auth')->get('/mi-estanteria', [LibraryController::class, 'index'])->name('library.index');
 
     // --- RUTAS DEL PANEL ADMIN ---
     Route::prefix('admin')->name('admin.')->group(function () {
