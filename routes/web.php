@@ -14,6 +14,7 @@ use App\Http\Controllers\AdminWithdrawalController;
 use App\Http\Controllers\VendedorController;
 use App\Http\Controllers\AdminVendedorController;
 use App\Http\Controllers\PaisController;
+use App\Http\Controllers\WalletController;
 use App\Http\Controllers\LibraryController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -75,6 +76,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::get('/perfil/vendedor', [VendedorController::class, 'create'])->name('vendedores_create');
     Route::post('/perfil/vendedor', [VendedorController::class, 'store'])->name('vendedores_store');
+
+    Route::get('/wallet/movimientos', [WalletController::class, 'movimientos'])->name('wallet.movimientos');
 
     Route::post('/writer/withdraw', [WriterWithdrawController::class, 'store'])->name('writer.withdraw.store');
     Route::get('/writer/withdraw/history', [WriterWithdrawController::class, 'historial_solicitudes_retiro'])->name('writer.withdraw_history');

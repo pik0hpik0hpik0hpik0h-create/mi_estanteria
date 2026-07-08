@@ -199,6 +199,14 @@ class PaypalController extends Controller
                             $vWallet->saldo_disponible += $comision_vendedor_item;
                             $vWallet->total_generado   += $comision_vendedor_item;
                             $vWallet->save();
+
+                            WalletTransaction::create([
+                                'wallet_id'     => $vWallet->id,
+                                'tipo'          => 'ingreso',
+                                'monto'         => $comision_vendedor_item,
+                                'descripcion'   => "Comisión por venta: {$book->titulo} (Ref: {$order->codigo}) (Vendedor)",
+                                'referencia_id' => $orderItem->id
+                            ]);
                         }
                     }
 

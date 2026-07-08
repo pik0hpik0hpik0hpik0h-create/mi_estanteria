@@ -108,7 +108,8 @@
 
 <div class="md:flex justify-center px-8 gap-8 mb-8">
 
-  <div class="font-inconsolata stats w-full md:w-3/5 shadow-md bg-linear-to-r from-accent/30 to-accent rounded-md p-6 motion-preset-slide-right">
+  <a href="{{ route('wallet.movimientos') }}" title="Ver movimientos de la billetera"
+     class="font-inconsolata stats w-full md:w-3/5 shadow-md bg-linear-to-r from-accent/30 to-accent rounded-md p-6 motion-preset-slide-right cursor-pointer transition hover:shadow-lg hover:scale-[1.01]">
 
     <div class="stat">
       <div class="stat-title">Saldo disponible</div>
@@ -116,7 +117,7 @@
         ${{ number_format($wallet->saldo_disponible ?? 0, 2) }}
       </div>
       <div class="stat-desc">
-        Fondos listos para retirar
+        Fondos listos para retirar · <span class="link">Ver movimientos</span>
       </div>
     </div>
 
@@ -130,7 +131,7 @@
       </div>
     </div>
 
-  </div>
+  </a>
 
   <div class="w-full border border-base-content/20 md:w-2/5 rounded-md p-6 motion-preset-slide-left mt-8 md:mt-0">
 

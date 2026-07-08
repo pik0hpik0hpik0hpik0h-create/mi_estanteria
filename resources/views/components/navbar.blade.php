@@ -1,4 +1,3 @@
-```blade
 <nav class="font-inconsolata fixed top-3 left-1/2 -translate-x-1/2 w-[98%] rounded-lg border border-base-300 shadow-md z-50">
 
     <div class="motion-preset-fade navbar md:h-22 px-6 rounded-lg bg-base-200/50 glass">
@@ -192,4 +191,3 @@
     </div>
 
 </nav>
-```
