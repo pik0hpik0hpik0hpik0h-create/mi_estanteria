@@ -1,3 +1,4 @@
+```blade
 <nav class="font-inconsolata fixed top-3 left-1/2 -translate-x-1/2 w-[98%] rounded-lg border border-base-300 shadow-md z-50">
 
     <div class="motion-preset-fade navbar md:h-22 px-6 rounded-lg bg-base-200/50 glass">
@@ -25,10 +26,12 @@
 
                 <ul class="menu md:menu-horizontal gap-2 p-0 text-base-content max-md:mt-2">
 
+                    {{-- BOTONES MÓVIL --}}
                     @auth
                     <div class="mt-2 flex gap-2">
 
-                        <a class="btn btn-primary w-1/2 md:hidden text-sm md:text-lg" href="{{ route('perfil') }}">
+                        <a class="btn btn-primary w-1/2 md:hidden text-sm"
+                           href="{{ route('perfil') }}">
                             <div class="avatar">
                                 <div class="size-5 rounded-full">
                                     <img src="
@@ -40,8 +43,7 @@
                                             {{ asset('assets/img/default_avatar.jpg') }}
                                         @endif
                                     "
-                                    alt="Avatar"
-                                    />
+                                    alt="Avatar"/>
                                 </div>
                             </div>
                             Perfil
@@ -49,7 +51,7 @@
 
                         <form method="POST" class="w-1/2" action="{{ route('logout') }}">
                             @csrf
-                            <button class="btn btn-primary w-full md:hidden text-sm md:text-lg" type="submit">
+                            <button class="btn btn-primary w-full md:hidden text-sm" type="submit">
                                 <span class="icon-[tabler--logout-2] size-5"></span>
                                 Salir
                             </button>
@@ -57,17 +59,20 @@
 
                     </div>
                     @else
-                    <a class="btn btn-primary w-full md:hidden mt-2 text-sm md:text-lg" href="{{ route('login') }}">
-                        Ingresar
-                    </a>
+                        <a class="btn btn-primary w-full md:hidden mt-2 text-sm"
+                           href="{{ route('login') }}">
+                            Ingresar
+                        </a>
                     @endauth
 
-                    <a href="{{ route('cart.index') }}" class="btn md:hidden font-light">
+                    <a href="{{ route('cart.index') }}" class="btn md:hidden font-light mt-2">
                         <span class="icon-[tabler--shopping-cart] size-5"></span>
                     </a>
 
+                    {{-- MENÚ --}}
                     <li>
-                        <a class="hover:text-primary text-sm md:text-lg" href="{{ route('index') }}">
+                        <a class="hover:text-primary text-sm md:text-lg"
+                           href="{{ route('index') }}">
                             Inicio
                         </a>
                     </li>
@@ -75,28 +80,32 @@
                     {{-- MI ESTANTERÍA --}}
                     @auth
                     <li>
-                        <a class="hover:text-primary text-sm md:text-lg font-semibold"
-                           href="{{ route('library.index') }}">
+                        <a href="{{ route('library.index') }}"
+                           class="hover:text-primary text-sm md:text-lg flex items-center gap-2 font-semibold">
+                            <span class="icon-[tabler--books] size-5"></span>
                             Mi Estantería
                         </a>
                     </li>
                     @endauth
 
-                    {{-- ADMIN --}}
+                    {{-- PANEL ADMIN --}}
                     @auth
                         @if(Auth::user()->is_admin)
                             <li>
-                                <a class="hover:text-primary text-sm md:text-lg font-bold"
-                                   href="{{ route('admin.books.index') }}">
-                                    Panel Admin
+                                <a href="{{ route('admin.books.index') }}"
+                                   class="text-sm md:text-base flex items-center gap-2 text-warning hover:bg-warning/10 rounded-lg transition-all">
+                                    <span class="icon-[tabler--shield-lock] size-4"></span>
+                                    Admin
                                 </a>
                             </li>
                         @endif
                     @endauth
 
+                    {{-- EXPLORAR --}}
                     <li class="dropdown relative inline-flex [--auto-close:inside] [--offset:8] [--placement:bottom-end]">
 
-                        <button type="button" class="hover:text-primary text-sm md:text-lg dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content">
+                        <button type="button"
+                                class="hover:text-primary text-sm md:text-lg dropdown-toggle dropdown-open:bg-base-content/10 dropdown-open:text-base-content">
                             Explorar
                             <span class="icon-[tabler--chevron-down] dropdown-open:rotate-180 size-4"></span>
                         </button>
@@ -138,42 +147,42 @@
 
             </div>
 
-            {{-- ICONOS DERECHA (DESKTOP) --}}
+            {{-- DERECHA (DESKTOP) --}}
             <div class="items-center justify-between w-auto hidden md:flex gap-3">
 
-                @auth
-                <a href="{{ route('library.index') }}" class="btn btn-outline btn-primary">
-                    <span class="icon-[tabler--books] size-5"></span>
-                    Mi Estantería
-                </a>
-                @endauth
-
-                <a href="{{ route('cart.index') }}" class="btn bg-none font-light">
-                    <span class="icon-[tabler--shopping-cart] size-5"></span>
+                {{-- CARRITO --}}
+                <a href="{{ route('cart.index') }}"
+                   class="btn btn-ghost btn-circle">
+                    <span class="icon-[tabler--shopping-cart] size-6"></span>
                 </a>
 
+                {{-- PERFIL --}}
                 @auth
-                <a href="{{ route('perfil') }}">
-                    <div class="avatar">
-                        <div class="size-10 rounded-full border-2 border-primary">
-                            <img src="
-                                @if(Auth::user()->avatar)
-                                    {{ str_contains(Auth::user()->avatar, 'http')
-                                        ? Auth::user()->avatar
-                                        : asset('storage/' . Auth::user()->avatar) }}
-                                @else
-                                    {{ asset('assets/img/default_avatar.jpg') }}
-                                @endif
-                            "
-                            alt="Avatar"
-                            />
+
+                    <a href="{{ route('perfil') }}">
+                        <div class="avatar">
+                            <div class="size-10 rounded-full border-2 border-primary">
+                                <img src="
+                                    @if(Auth::user()->avatar)
+                                        {{ str_contains(Auth::user()->avatar, 'http')
+                                            ? Auth::user()->avatar
+                                            : asset('storage/' . Auth::user()->avatar) }}
+                                    @else
+                                        {{ asset('assets/img/default_avatar.jpg') }}
+                                    @endif
+                                "
+                                alt="Avatar"/>
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+
                 @else
-                    <a class="btn btn-primary text-lg" href="{{ route('login') }}">
+
+                    <a class="btn btn-primary"
+                       href="{{ route('login') }}">
                         Ingresar
                     </a>
+
                 @endauth
 
             </div>
@@ -183,3 +192,4 @@
     </div>
 
 </nav>
+```

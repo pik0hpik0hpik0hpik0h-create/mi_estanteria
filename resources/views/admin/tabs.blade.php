@@ -16,4 +16,10 @@
         <span class="icon-[tabler--pig-money] size-4 md:size-5 mr-1 md:mr-2"></span>
         <span class="text-xs sm:text-sm md:text-base">Autorización de vendedores</span>
     </a>
+    <a href="{{ route('admin.retiros.index') }}"
+       class="tab tab-sm md:tab-lg whitespace-nowrap {{ ($activeTab ?? '') === 'retiros' ? 'tab-active text-primary font-bold' : '' }}">
+        <span class="icon-[tabler--pig-money] size-4 md:size-5 mr-1 md:mr-2"></span>
+        <span class="text-xs sm:text-sm md:text-base">Autorización de retiros</span>
+    </a>
 </div>
+ 

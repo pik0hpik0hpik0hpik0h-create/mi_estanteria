@@ -10,6 +10,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\PaypalController;
 use App\Http\Controllers\AdminBookController;
 use App\Http\Controllers\AdminWriterController;
+use App\Http\Controllers\AdminWithdrawalController;
 use App\Http\Controllers\VendedorController;
 use App\Http\Controllers\AdminVendedorController;
 use App\Http\Controllers\PaisController;
@@ -98,6 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/paypal/cancel', [PaypalController::class, 'cancel'])->name('paypal.cancel');
 
     Route::middleware('auth')->get('/mi-estanteria', [LibraryController::class, 'index'])->name('library.index');
+    Route::get('/mi-estanteria/{userBook}', [LibraryController::class, 'leer'])->middleware('auth')->name('library.leer');
 
     // --- RUTAS DEL PANEL ADMIN ---
     Route::prefix('admin')->name('admin.')->group(function () {
@@ -117,6 +119,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/vendedores-pendientes/{vendedor}', [AdminVendedorController::class, 'show'])->name('vendedores.show');
         Route::post('/vendedores-pendientes/{vendedor}/autorizar', [AdminVendedorController::class, 'approve'])->name('vendedores.approve');
         Route::post('/vendedores-pendientes/{vendedor}/rechazar', [AdminVendedorController::class, 'reject'])->name('vendedores.reject');
-    });
+
+        // Autorización de retiros
+        Route::get(
+            '/retiros-pendientes',
+            [AdminWithdrawalController::class, 'index']
+        )->name('retiros.index');
+
+
+        Route::get(
+            '/retiros-pendientes/{withdrawal}',
+            [AdminWithdrawalController::class, 'show']
+        )->name('retiros.show');
+
+
+        Route::post(
+            '/retiros-pendientes/{withdrawal}/autorizar',
+            [AdminWithdrawalController::class, 'approve']
+        )->name('retiros.approve');
+
+
+        Route::post(
+            '/retiros-pendientes/{withdrawal}/rechazar',
+            [AdminWithdrawalController::class, 'reject']
+        )->name('retiros.reject');
+            });
 
 });

@@ -14,6 +14,11 @@ class WalletTransaction extends Model
         'referencia_id'
     ];
 
+    protected $casts = [
+        'monto' => 'decimal:2',
+    ];
+
+
     public function wallet()
     {
         return $this->belongsTo(WriterWallet::class, 'wallet_id');

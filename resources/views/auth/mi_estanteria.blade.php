@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app') 
 
 @section('content')
 
@@ -91,12 +91,8 @@
                             {{ $userBook->created_at->format('d/m/Y') }}
                         </div>
 
-                        <a
-                            
-                            class="btn btn-primary btn-sm"
-                        >
-                            <span class="icon-[tabler--book]"></span>
-                            Leer
+                        <a href="{{ route('library.show', $userBook) }}" class="btn btn-primary">
+                            Leer libro
                         </a>
 
                     </div>
